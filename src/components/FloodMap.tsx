@@ -480,84 +480,84 @@ export const FloodMap: React.FC<FloodMapProps> = ({
   const handleResetZoom = () => handleRegionJump(13.2, 101.0, 6);
 
   return (
-    <div className={`bg-white dark:bg-[#112225] rounded-xl border border-[#d2dedd] dark:border-[#233a3d] shadow-xs overflow-hidden flex flex-col h-full transition-all ${
+    <div className={`bg-white dark:bg-[#202020] rounded-xl border border-[#e6e6e6] dark:border-[#2f2f2f] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col h-full transition-all ${
       isFullscreen ? 'fixed inset-0 z-[90] rounded-none' : ''
     }`}>
       {/* Control Ribbon */}
-      <div className="px-3.5 py-2 border-b border-[#d2dedd] dark:border-[#233a3d] flex flex-wrap items-center justify-between gap-2 bg-[#f4f8f7] dark:bg-[#162b2e]/60">
+      <div className="px-3.5 py-2 border-b border-[#e6e6e6] dark:border-[#2f2f2f] flex flex-wrap items-center justify-between gap-2 bg-[#f6f5f4] dark:bg-[#252525]">
         {/* Layer Checkboxes */}
         <div className="flex flex-wrap items-center gap-2.5 text-xs">
-          <label className="flex items-center gap-1.5 cursor-pointer text-[#0e2429] dark:text-[#e2eeee]">
+          <label className="flex items-center gap-1.5 cursor-pointer text-[#31302e] dark:text-[#d4d4d4]">
             <input
               type="checkbox"
               checked={showWl}
               onChange={(e) => setShowWl(e.target.checked)}
-              className="rounded accent-[#d7263d] cursor-pointer"
+              className="rounded accent-[#e03e3e] cursor-pointer"
             />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#d7263d]"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#e03e3e]"></span>
             <span>ระดับน้ำ</span>
           </label>
 
-          <label className="flex items-center gap-1.5 cursor-pointer text-[#0e2429] dark:text-[#e2eeee]">
+          <label className="flex items-center gap-1.5 cursor-pointer text-[#31302e] dark:text-[#d4d4d4]">
             <input
               type="checkbox"
               checked={showRain}
               onChange={(e) => setShowRain(e.target.checked)}
-              className="rounded accent-[#3a4ed7] cursor-pointer"
+              className="rounded accent-[#0075de] cursor-pointer"
             />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#3a4ed7]"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#0075de]"></span>
             <span>ฝนตกหนัก</span>
           </label>
 
-          <label className="flex items-center gap-1.5 cursor-pointer text-[#0e2429] dark:text-[#e2eeee]">
+          <label className="flex items-center gap-1.5 cursor-pointer text-[#31302e] dark:text-[#d4d4d4]">
             <input
               type="checkbox"
               checked={showDam}
               onChange={(e) => setShowDam(e.target.checked)}
-              className="rounded accent-[#0a6c86] cursor-pointer"
+              className="rounded accent-[#2a9d99] cursor-pointer"
             />
-            <span className="w-2.5 h-2.5 rounded-xs bg-[#0a6c86]"></span>
+            <span className="w-2.5 h-2.5 rounded-xs bg-[#2a9d99]"></span>
             <span>เขื่อน</span>
           </label>
 
-          <label className="flex items-center gap-1.5 cursor-pointer text-[#0e2429] dark:text-[#e2eeee]">
+          <label className="flex items-center gap-1.5 cursor-pointer text-[#31302e] dark:text-[#d4d4d4]">
             <input
               type="checkbox"
               checked={showGdacs}
               onChange={(e) => setShowGdacs(e.target.checked)}
-              className="rounded accent-[#9333ea] cursor-pointer"
+              className="rounded accent-[#d6b6f6] cursor-pointer"
             />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#9333ea]"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#9065b0]"></span>
             <span>GDACS</span>
           </label>
 
-          <label className="flex items-center gap-1.5 cursor-pointer text-[#0e2429] dark:text-[#e2eeee]">
+          <label className="flex items-center gap-1.5 cursor-pointer text-[#31302e] dark:text-[#d4d4d4]">
             <input
               type="checkbox"
               checked={showCctv}
               onChange={(e) => setShowCctv(e.target.checked)}
-              className="rounded accent-rose-500 cursor-pointer"
+              className="rounded accent-[#ff64c8] cursor-pointer"
             />
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#ff64c8]"></span>
             <span>กล้อง CCTV</span>
           </label>
         </div>
 
         {/* Action buttons */}
         <div className="flex items-center gap-2">
-          <label className="flex items-center gap-1.5 text-xs text-[#0e2429] dark:text-[#e2eeee] cursor-pointer font-medium bg-white dark:bg-[#112225] px-2.5 py-1 rounded-lg border border-[#d2dedd] dark:border-[#233a3d]">
+          <label className="flex items-center gap-1.5 text-xs text-[#31302e] dark:text-[#d4d4d4] cursor-pointer font-medium bg-white dark:bg-[#202020] px-2.5 py-1 rounded-md border border-[#e6e6e6] dark:border-[#2f2f2f]">
             <input
               type="checkbox"
               checked={onlyCrit}
               onChange={(e) => setOnlyCrit(e.target.checked)}
-              className="rounded accent-[#d7263d] cursor-pointer"
+              className="rounded accent-[#e03e3e] cursor-pointer"
             />
             <span>เฉพาะน้ำมาก/ล้นตลิ่ง</span>
           </label>
 
           <button
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className="p-1 rounded-lg border border-[#d2dedd] dark:border-[#233a3d] bg-white dark:bg-[#112225] text-[#53676b] hover:text-[#0e2429] dark:hover:text-white transition cursor-pointer"
+            className="p-1 rounded-md border border-[#e6e6e6] dark:border-[#2f2f2f] bg-white dark:bg-[#202020] text-[#615d59] hover:text-[#000000] dark:hover:text-white transition cursor-pointer"
             title={isFullscreen ? 'ย่อหน้าต่างแผนที่' : 'ขยายเต็มหน้าจอ'}
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -566,59 +566,59 @@ export const FloodMap: React.FC<FloodMapProps> = ({
       </div>
 
       {/* Region Presets Ribbon */}
-      <div className="px-3.5 py-1.5 border-b border-[#e2dedd] dark:border-[#233a3d] flex items-center justify-between text-xs bg-white dark:bg-[#112225] shrink-0">
+      <div className="px-3.5 py-1.5 border-b border-[#e6e6e6] dark:border-[#2f2f2f] flex items-center justify-between text-xs bg-white dark:bg-[#202020] shrink-0">
         <div className="flex items-center gap-1 overflow-x-auto py-0.5">
-          <span className="text-[#53676b] dark:text-[#91a6a9] shrink-0 font-medium mr-1">ซูมด่วน:</span>
+          <span className="text-[#615d59] dark:text-[#9b9a97] shrink-0 font-medium mr-1">ซูมด่วน:</span>
           <button
             onClick={handleResetZoom}
-            className="px-2 py-0.5 rounded-md hover:bg-[#f4f8f7] dark:hover:bg-[#162b2e] text-[#0a6c86] dark:text-[#3fb6d3] shrink-0 cursor-pointer font-medium"
+            className="px-2 py-0.5 rounded-md hover:bg-[#f6f5f4] dark:hover:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shrink-0 cursor-pointer font-medium"
           >
             ทั้งประเทศ
           </button>
           <button
             onClick={() => handleRegionJump(13.75, 100.5, 9)}
-            className="px-2 py-0.5 rounded-md hover:bg-[#f4f8f7] dark:hover:bg-[#162b2e] text-[#0a6c86] dark:text-[#3fb6d3] shrink-0 cursor-pointer font-medium"
+            className="px-2 py-0.5 rounded-md hover:bg-[#f6f5f4] dark:hover:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shrink-0 cursor-pointer font-medium"
           >
             กทม.-ปริมณฑล
           </button>
           <button
             onClick={() => handleRegionJump(18.79, 99.0, 8)}
-            className="px-2 py-0.5 rounded-md hover:bg-[#f4f8f7] dark:hover:bg-[#162b2e] text-[#0a6c86] dark:text-[#3fb6d3] shrink-0 cursor-pointer font-medium"
+            className="px-2 py-0.5 rounded-md hover:bg-[#f6f5f4] dark:hover:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shrink-0 cursor-pointer font-medium"
           >
             ภาคเหนือ
           </button>
           <button
             onClick={() => handleRegionJump(16.0, 103.0, 7)}
-            className="px-2 py-0.5 rounded-md hover:bg-[#f4f8f7] dark:hover:bg-[#162b2e] text-[#0a6c86] dark:text-[#3fb6d3] shrink-0 cursor-pointer font-medium"
+            className="px-2 py-0.5 rounded-md hover:bg-[#f6f5f4] dark:hover:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shrink-0 cursor-pointer font-medium"
           >
             ภาคอีสาน
           </button>
           <button
             onClick={() => handleRegionJump(14.5, 100.5, 8)}
-            className="px-2 py-0.5 rounded-md hover:bg-[#f4f8f7] dark:hover:bg-[#162b2e] text-[#0a6c86] dark:text-[#3fb6d3] shrink-0 cursor-pointer font-medium"
+            className="px-2 py-0.5 rounded-md hover:bg-[#f6f5f4] dark:hover:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shrink-0 cursor-pointer font-medium"
           >
             ภาคกลาง
           </button>
           <button
             onClick={() => handleRegionJump(8.5, 99.5, 7)}
-            className="px-2 py-0.5 rounded-md hover:bg-[#f4f8f7] dark:hover:bg-[#162b2e] text-[#0a6c86] dark:text-[#3fb6d3] shrink-0 cursor-pointer font-medium"
+            className="px-2 py-0.5 rounded-md hover:bg-[#f6f5f4] dark:hover:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shrink-0 cursor-pointer font-medium"
           >
             ภาคใต้
           </button>
         </div>
 
         {/* Zoom In / Out Buttons */}
-        <div className="hidden sm:flex items-center gap-1 border-l border-[#d2dedd] dark:border-[#233a3d] pl-2">
+        <div className="hidden sm:flex items-center gap-1 border-l border-[#e6e6e6] dark:border-[#2f2f2f] pl-2">
           <button
             onClick={handleZoomIn}
-            className="p-1 hover:bg-black/5 dark:hover:bg-white/10 rounded text-[#53676b] cursor-pointer"
+            className="p-1 hover:bg-black/5 dark:hover:bg-white/10 rounded text-[#615d59] cursor-pointer"
             title="ซูมเข้า"
           >
             <ZoomIn className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={handleZoomOut}
-            className="p-1 hover:bg-black/5 dark:hover:bg-white/10 rounded text-[#53676b] cursor-pointer"
+            className="p-1 hover:bg-black/5 dark:hover:bg-white/10 rounded text-[#615d59] cursor-pointer"
             title="ซูมออก"
           >
             <ZoomOut className="w-3.5 h-3.5" />
@@ -632,26 +632,26 @@ export const FloodMap: React.FC<FloodMapProps> = ({
       </div>
 
       {/* Legend Footer */}
-      <div className="px-3.5 py-2 border-t border-[#d2dedd] dark:border-[#233a3d] bg-[#f4f8f7] dark:bg-[#162b2e]/60 flex flex-wrap items-center justify-between gap-y-1 gap-x-3 text-[11px] text-[#53676b] dark:text-[#91a6a9]">
+      <div className="px-3.5 py-2 border-t border-[#e6e6e6] dark:border-[#2f2f2f] bg-[#f6f5f4] dark:bg-[#252525] flex flex-wrap items-center justify-between gap-y-1 gap-x-3 text-[11px] text-[#615d59] dark:text-[#9b9a97]">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#d7263d]"></span>
-            <span className="font-medium text-[#0e2429] dark:text-[#e2eeee]">ล้นตลิ่ง (&gt;100%)</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#e03e3e]"></span>
+            <span className="font-medium text-[#000000] dark:text-[#ffffff]">ล้นตลิ่ง (&gt;100%)</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#ea7a16]"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#dd5b00]"></span>
             <span>น้ำมาก (70–100%)</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#279b63]"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#1aae39]"></span>
             <span>ปกติ</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full border border-[#3a4ed7] bg-[#3a4ed7]/30"></span>
+            <span className="w-2.5 h-2.5 rounded-full border border-[#0075de] bg-[#0075de]/30"></span>
             <span>ฝนสะสม 24 ชม.</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-xs bg-[#0a6c86]"></span>
+            <span className="w-2.5 h-2.5 rounded-xs bg-[#2a9d99]"></span>
             <span>เขื่อนใหญ่ (% รนก.)</span>
           </span>
         </div>

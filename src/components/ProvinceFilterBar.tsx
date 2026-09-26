@@ -38,10 +38,10 @@ export const ProvinceFilterBar: React.FC<ProvinceFilterBarProps> = ({
   }, [stations]);
 
   return (
-    <div className="bg-white dark:bg-[#112225] p-2.5 rounded-xl border border-[#d2dedd] dark:border-[#233a3d] flex flex-wrap items-center justify-between gap-2 text-xs">
+    <div className="bg-white dark:bg-[#202020] p-2.5 rounded-xl border border-[#e6e6e6] dark:border-[#2f2f2f] shadow-[0_1px_2px_rgba(0,0,0,0.04)] flex flex-wrap items-center justify-between gap-2 text-xs">
       <div className="flex items-center gap-2 overflow-x-auto py-0.5">
-        <span className="text-[#53676b] dark:text-[#91a6a9] font-medium flex items-center gap-1 shrink-0">
-          <MapPin className="w-3.5 h-3.5 text-[#0a6c86] dark:text-[#3fb6d3]" />
+        <span className="text-[#615d59] dark:text-[#9b9a97] font-medium flex items-center gap-1 shrink-0">
+          <MapPin className="w-3.5 h-3.5 text-[#0075de]" />
           จุดเสี่ยงเร่งด่วน:
         </span>
 
@@ -53,13 +53,13 @@ export const ProvinceFilterBar: React.FC<ProvinceFilterBarProps> = ({
               onClick={() => onSelectProvince(isSelected ? '' : name)}
               className={`px-2.5 py-1 rounded-md transition cursor-pointer flex items-center gap-1.5 shrink-0 ${
                 isSelected
-                  ? 'bg-[#0a6c86] text-white font-semibold'
-                  : 'bg-[#f4f8f7] dark:bg-[#162b2e] text-[#0e2429] dark:text-[#e2eeee] hover:bg-[#e9efee] border border-[#d2dedd] dark:border-[#233a3d]'
+                  ? 'bg-[#0075de] text-white font-semibold shadow-2xs'
+                  : 'bg-[#f6f5f4] dark:bg-[#252525] text-[#31302e] dark:text-[#d4d4d4] hover:bg-white border border-[#e6e6e6] dark:border-[#2f2f2f]'
               }`}
             >
               <span>{name}</span>
-              <span className={`text-[10px] font-mono-num font-bold px-1 rounded ${
-                stat.lv5 > 0 ? (isSelected ? 'bg-red-400 text-slate-900' : 'bg-red-500 text-white') : (isSelected ? 'bg-amber-400 text-slate-900' : 'bg-amber-500 text-white')
+              <span className={`text-[10px] font-mono-num font-bold px-1.5 py-0.2 rounded-full ${
+                stat.lv5 > 0 ? (isSelected ? 'bg-white text-[#e03e3e]' : 'bg-[#e03e3e] text-white') : (isSelected ? 'bg-white text-[#dd5b00]' : 'bg-[#dd5b00] text-white')
               }`}>
                 {stat.lv5 > 0 ? `${stat.lv5} ล้น` : `${stat.lv4}`}
               </span>
@@ -71,7 +71,7 @@ export const ProvinceFilterBar: React.FC<ProvinceFilterBarProps> = ({
       {selectedProvince && (
         <button
           onClick={onClear}
-          className="flex items-center gap-1 text-[11px] text-red-600 dark:text-red-400 hover:underline cursor-pointer shrink-0 font-medium"
+          className="flex items-center gap-1 text-[11px] text-[#e03e3e] dark:text-[#ff6464] hover:underline cursor-pointer shrink-0 font-medium"
         >
           <X className="w-3.5 h-3.5" />
           <span>ล้างตัวกรอง ({selectedProvince})</span>

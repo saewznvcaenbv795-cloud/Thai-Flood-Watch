@@ -2,51 +2,92 @@
 
 @layer base {
   :root {
-    --font-thai: "IBM Plex Sans Thai", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --font-display: "Bai Jamjuree", "IBM Plex Sans Thai", sans-serif;
+    --font-sans: "Inter", "IBM Plex Sans Thai", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-mono: "IBM Plex Mono", monospace;
 
-    --bg-page: #eef3f2;
-    --surface-card: #ffffff;
-    --surface-subtle: #f4f8f7;
-    --border-color: #d2dedd;
-    --text-primary: #0e2429;
-    --text-muted: #53676b;
+    /* Notion Design Tokens */
+    --color-primary: #0075de;
+    --color-primary-active: #005bab;
+    --color-secondary: #213183;
+    --color-on-primary: #ffffff;
+    --color-canvas: #ffffff;
+    --color-canvas-soft: #f6f5f4;
+    --color-surface: #ffffff;
+    --color-ink: #000000;
+    --color-ink-secondary: #31302e;
+    --color-ink-muted: #615d59;
+    --color-ink-faint: #a39e98;
+    --color-hairline: #e6e6e6;
 
-    --lv5: #d7263d;
-    --lv4: #ea7a16;
-    --lv3: #279b63;
-    --lv2: #be9719;
-    --lv1: #875727;
-    --rain: #3a4ed7;
-    --dam: #096a84;
-    --gdacs: #8f3eb2;
+    /* Sticker Palette */
+    --sticker-sky: #62aef0;
+    --sticker-purple: #d6b6f6;
+    --sticker-purple-deep: #391c57;
+    --sticker-pink: #ff64c8;
+    --sticker-orange: #dd5b00;
+    --sticker-orange-deep: #793400;
+    --sticker-teal: #2a9d99;
+    --sticker-green: #1aae39;
+    --sticker-brown: #523410;
+
+    --bg-page: #f6f5f4;
+    --surface-card: #ffffff;
+    --surface-subtle: #f6f5f4;
+    --border-color: #e6e6e6;
+    --text-primary: #000000;
+    --text-muted: #615d59;
+
+    --lv5: #e03e3e;
+    --lv4: #dd5b00;
+    --lv3: #1aae39;
+    --lv2: #dfab01;
+    --lv1: #937264;
+    --rain: #0075de;
+    --dam: #2a9d99;
+    --gdacs: #9065b0;
   }
 
   .dark {
-    --bg-page: #0b1517;
-    --surface-card: #112225;
-    --surface-subtle: #162b2e;
-    --border-color: #233a3d;
-    --text-primary: #e2eeee;
-    --text-muted: #91a6a9;
+    --color-primary: #0075de;
+    --color-primary-active: #005bab;
+    --color-secondary: #1e295d;
+    --color-on-primary: #ffffff;
+    --color-canvas: #191919;
+    --color-canvas-soft: #202020;
+    --color-surface: #252525;
+    --color-ink: #ffffff;
+    --color-ink-secondary: #d4d4d4;
+    --color-ink-muted: #9b9a97;
+    --color-ink-faint: #6e6d6a;
+    --color-hairline: #2f2f2f;
 
-    --lv5: #ff5469;
-    --lv4: #ff9b3b;
-    --lv3: #43c489;
-    --lv2: #dfba37;
-    --lv1: #b88450;
-    --rain: #7b8eff;
-    --dam: #3eb5d2;
-    --gdacs: #c37ce8;
+    --bg-page: #191919;
+    --surface-card: #202020;
+    --surface-subtle: #252525;
+    --border-color: #2f2f2f;
+    --text-primary: #ffffff;
+    --text-muted: #9b9a97;
+
+    --lv5: #ff6464;
+    --lv4: #ff8c42;
+    --lv3: #42cc68;
+    --lv2: #f2cb38;
+    --lv1: #b89284;
+    --rain: #62aef0;
+    --dam: #3fb6d3;
+    --gdacs: #d6b6f6;
   }
 
   body {
-    font-family: var(--font-thai);
+    font-family: var(--font-sans);
+    background-color: var(--bg-page);
+    color: var(--color-ink);
   }
 
   h1, h2, h3, h4, .font-display {
-    font-family: var(--font-display);
+    font-family: var(--font-sans);
+    letter-spacing: -0.025em;
+    font-weight: 700;
   }
 
   .font-mono-num {
@@ -68,32 +109,32 @@
 
 /* Leaflet Customization */
 .leaflet-container {
-  font-family: var(--font-thai) !important;
-  background-color: #dbe4e4 !important;
+  font-family: var(--font-sans) !important;
+  background-color: #f6f5f4 !important;
   width: 100%;
   height: 100%;
   z-index: 1;
 }
 
 .dark .leaflet-container {
-  background-color: #0d1a1c !important;
+  background-color: #191919 !important;
 }
 
 .custom-flood-popup .leaflet-popup-content-wrapper {
   background: #ffffff;
-  color: #0f2328;
+  color: #000000;
   border-radius: 12px;
   padding: 0;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.22);
-  border: 1px solid #d2dedd;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e6e6e6;
   overflow: hidden;
 }
 
 .dark .custom-flood-popup .leaflet-popup-content-wrapper {
-  background: #112225;
-  color: #e2eded;
-  border-color: #253e43;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  background: #202020;
+  color: #ffffff;
+  border-color: #2f2f2f;
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.5);
 }
 
 .custom-flood-popup .leaflet-popup-content {

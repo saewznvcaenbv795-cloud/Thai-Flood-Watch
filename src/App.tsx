@@ -5,7 +5,9 @@ import { FloodMap } from './components/FloodMap';
 import { SidePanel } from './components/SidePanel';
 import { WindyEmbed } from './components/WindyEmbed';
 import { LiveRadarViewer } from './components/LiveRadarViewer';
+import { WeatherForecastViewer } from './components/WeatherForecastViewer';
 import { CctvViewer } from './components/CctvViewer';
+import { CitizenAidHub } from './components/CitizenAidHub';
 import { WatchlistProvinces } from './components/WatchlistProvinces';
 import { BasinSummary } from './components/BasinSummary';
 import { MajorDams } from './components/MajorDams';
@@ -192,7 +194,7 @@ export default function App() {
   }, [lv5Stations]);
 
   return (
-    <div className="min-h-screen bg-[#eef3f2] dark:bg-[#0b1517] text-[#0e2429] dark:text-[#e2eeee] flex flex-col transition-colors duration-200">
+    <div className="min-h-screen bg-[#f6f5f4] dark:bg-[#191919] text-[#000000] dark:text-[#ffffff] flex flex-col transition-colors duration-200">
       {/* 1. Header & Navigation */}
       <Header
         updatedAt={updatedAt}
@@ -210,42 +212,66 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="max-w-[1560px] mx-auto w-full px-3 sm:px-6 py-4 flex-1 space-y-4">
+        {/* Notion Document Title Banner */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#e6e6e6] dark:border-[#2f2f2f]">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl select-none">🌊</span>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#000000] dark:text-[#ffffff] font-display">
+                สถานการณ์น้ำท่วมประเทศไทย (ThaiFlood.online)
+              </h1>
+              <p className="text-xs text-[#615d59] dark:text-[#9b9a97]">
+                ระบบติดตามระดับน้ำ ฝนสะสม 24 ชม. ปริมาตรเขื่อน กล้องสด เส้นทางน้ำท่วม และศูนย์ช่วยเหลือ
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-xs">
+            <span className="px-2.5 py-1 rounded-full bg-white dark:bg-[#252525] border border-[#e6e6e6] dark:border-[#2f2f2f] text-[#615d59] dark:text-[#9b9a97] flex items-center gap-1.5 font-mono-num">
+              <span className="w-2 h-2 rounded-full bg-[#1aae39]" />
+              <span>ข้อมูลสด: คลังข้อมูลน้ำแห่งชาติ (สสน.)</span>
+            </span>
+          </div>
+        </div>
+
         {/* Network Error Notice */}
         {error && (
-          <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs flex items-center justify-between">
-            <span>⚠️ โหลดข้อมูลไม่สำเร็จ ({error}) ระบบจะลองใหม่อัตโนมัติทุก 5 นาที</span>
+          <div className="p-3.5 rounded-lg bg-white dark:bg-[#202020] border border-[#e03e3e]/30 text-[#e03e3e] dark:text-[#ff6464] text-xs flex items-center justify-between shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <div className="flex items-center gap-2">
+              <span className="text-base">⚠️</span>
+              <span>โหลดข้อมูลไม่สำเร็จ ({error}) ระบบจะลองใหม่อัตโนมัติทุก 5 นาที</span>
+            </div>
             <button
               onClick={loadAllData}
-              className="underline font-semibold hover:text-red-700 cursor-pointer"
+              className="px-2.5 py-1 rounded-md bg-[#f6f5f4] dark:bg-[#252525] border border-[#e6e6e6] dark:border-[#2f2f2f] font-medium hover:bg-white text-xs cursor-pointer"
             >
               ลองใหม่ทันที
             </button>
           </div>
         )}
 
-        {/* Urgent Overflow Alert Banner */}
+        {/* Urgent Overflow Alert Banner - Notion Callout style */}
         {overflowCount > 0 && (
-          <div className="p-3 sm:p-3.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
-                <AlertTriangle className="w-5 h-5 text-white" />
+          <div className="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#202020] border border-[#e03e3e] shadow-[0_1px_3px_rgba(0,0,0,0.05)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-[#e03e3e]/10 text-[#e03e3e] flex items-center justify-center shrink-0 font-bold">
+                🚨
               </div>
               <div className="text-xs sm:text-sm">
-                <span className="font-bold">แจ้งเตือนสถานการณ์น้ำล้นตลิ่งวิกฤต: </span>
-                <span>
-                  พบสถานีน้ำล้นตลิ่ง <b className="font-mono-num">{fmt(overflowCount)}</b> จุด ในพื้นที่{' '}
+                <span className="font-bold text-[#e03e3e] dark:text-[#ff6464]">แจ้งเตือนระดับน้ำล้นตลิ่งวิกฤต: </span>
+                <span className="text-[#31302e] dark:text-[#d4d4d4]">
+                  พบสถานีน้ำล้นตลิ่ง <b className="font-mono-num text-[#e03e3e]">{fmt(overflowCount)}</b> จุด ในพื้นที่{' '}
                   {topOverflowProvinces.map((p) => `จ.${p}`).join(', ')}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+            <div className="flex items-center gap-2 self-end sm:self-auto shrink-0 text-xs">
               <button
                 onClick={() => {
                   setCurrentView('map');
                   if (lv5Stations[0]) handleSelectStation(lv5Stations[0].id);
                 }}
-                className="py-1 px-3 rounded-lg bg-white text-red-700 hover:bg-slate-100 font-bold text-xs flex items-center gap-1 transition cursor-pointer"
+                className="py-1.5 px-3.5 rounded-full bg-[#0075de] hover:bg-[#005bab] text-white font-medium flex items-center gap-1 transition cursor-pointer active:scale-95"
               >
                 <span>ดูจุดล้นตลิ่ง</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -253,9 +279,9 @@ export default function App() {
 
               <button
                 onClick={() => setIsSosModalOpen(true)}
-                className="py-1 px-3 rounded-lg bg-red-950/60 hover:bg-red-950/80 text-white font-bold text-xs flex items-center gap-1 transition cursor-pointer"
+                className="py-1.5 px-3.5 rounded-full bg-[#e03e3e] hover:bg-[#c92a2a] text-white font-medium flex items-center gap-1 transition cursor-pointer active:scale-95"
               >
-                <AlertOctagon className="w-3.5 h-3.5 text-amber-300" />
+                <AlertOctagon className="w-3.5 h-3.5" />
                 <span>ขอความช่วยเหลือ (SOS)</span>
               </button>
             </div>
@@ -356,10 +382,27 @@ export default function App() {
           </section>
         )}
 
+        {/* VIEW: WEATHER FORECAST (Open-Meteo 100% Free, Hourly, Today, Tomorrow, 5-Day) */}
+        {(currentView === 'forecast' || currentView === 'all') && (
+          <section className="space-y-4">
+            <WeatherForecastViewer
+              initialProvinceName={selectedProvince || 'กรุงเทพมหานคร'}
+              onFlyToCoords={handleFlyToCoords}
+            />
+          </section>
+        )}
+
         {/* VIEW 4: CCTV LIVE STREAMS & TRAFFIC CAMERAS */}
         {(currentView === 'cctv' || currentView === 'all') && (
           <section className="space-y-4">
             <CctvViewer onFlyToCoords={handleFlyToCoords} />
+          </section>
+        )}
+
+        {/* VIEW: CITIZEN AID HUB, ROAD CLOSURES, SHELTERS & COMPENSATION */}
+        {(currentView === 'aid' || currentView === 'all') && (
+          <section className="space-y-4">
+            <CitizenAidHub onFlyToCoords={handleFlyToCoords} />
           </section>
         )}
 

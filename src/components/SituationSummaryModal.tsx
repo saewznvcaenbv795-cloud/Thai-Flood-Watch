@@ -47,7 +47,7 @@ export const SituationSummaryModal: React.FC<SituationSummaryModalProps> = ({
     timeZone: 'Asia/Bangkok',
   }).format(updatedAt || new Date());
 
-  const summaryText = `🌊 สรุปสถานการณ์น้ำท่วมประเทศไทย (Thai Flood Watch)
+  const summaryText = `🌊 สรุปสถานการณ์น้ำท่วมประเทศไทย (ThaiFlood.online)
 📅 ประจำวันที่: ${formattedDate}
 
 🔴 สถานีน้ำล้นตลิ่ง: ${fmt(lv5Stations.length)} จุด
@@ -63,7 +63,7 @@ ${lv5Stations.slice(0, 5).map((s) => `• ${s.name} (จ.${s.province}) ${fmt(s.
 • เจ็บป่วยฉุกเฉิน กู้ชีพ: 1669
 • สายด่วนทางหลวง: 1586
 
-ติดตามสถานการณ์สดได้ที่: Thai Flood Watch
+ติดตามสถานการณ์สดได้ที่ https://thaiflood.online
 ที่มา: คลังข้อมูลน้ำแห่งชาติ สสน. และกรมชลประทาน`;
 
   const handleCopy = () => {

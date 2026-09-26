@@ -47,7 +47,7 @@ export const SosBeaconModal: React.FC<SosBeaconModalProps> = ({ isOpen, onClose 
 👥 จำนวนผู้ประสบภัย: ${peopleCount} คน ${hasSpecialCare ? '(มีผู้สูงอายุ / ผู้ป่วยติดเตียง / เด็กเล็ก)' : ''}
 ⚠️ สภาพการณ์: ${condition}
 
-(แจ้งผ่านระบบฉุกเฉิน Thai Flood Watch SOS)`;
+(แจ้งผ่านระบบฉุกเฉิน https://thaiflood.online)`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(sosMessage);

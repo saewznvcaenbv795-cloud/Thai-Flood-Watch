@@ -1,8 +1,8 @@
 import React from 'react';
-import { RefreshCw, Sun, Moon, AlertOctagon, FileText, PhoneCall, Map, BarChart3, CloudRain, Users, LayoutGrid, Table, Calculator, Video } from 'lucide-react';
+import { RefreshCw, Sun, Moon, AlertOctagon, FileText, PhoneCall, Map, BarChart3, CloudRain, Users, LayoutGrid, Table, Calculator, Video, ShieldAlert, CloudSun } from 'lucide-react';
 import { clock } from '../utils/formatters';
 
-export type ViewMode = 'map' | 'analytics' | 'radar' | 'cctv' | 'table' | 'prep' | 'community' | 'all';
+export type ViewMode = 'map' | 'analytics' | 'radar' | 'forecast' | 'cctv' | 'aid' | 'table' | 'prep' | 'community' | 'all';
 
 interface HeaderProps {
   updatedAt: Date | null;
@@ -32,41 +32,37 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenSosModal,
 }) => {
   return (
-    <header className="sticky top-0 z-50 bg-white/95 dark:bg-[#112225]/95 backdrop-blur-md border-b border-[#d2dedd] dark:border-[#233a3d] transition-colors">
+    <header className="sticky top-0 z-50 bg-white/95 dark:bg-[#191919]/95 backdrop-blur-md border-b border-[#e6e6e6] dark:border-[#2f2f2f] transition-colors">
       <div className="max-w-[1560px] mx-auto px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2.5">
-        {/* Zone 1: Brand */}
+        {/* Zone 1: Notion-style Brand */}
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#0a6c86] to-[#3fb6d3] text-white flex items-center justify-center shadow-xs shrink-0">
-            <svg className="w-5 h-5 stroke-white fill-none stroke-[2.2] stroke-linecap-round stroke-linejoin-round" viewBox="0 0 32 32">
-              <path d="M2 20c3.5 0 3.5-3 7-3s3.5 3 7 3 3.5-3 7-3 3.5 3 7 3" />
-              <path d="M2 26c3.5 0 3.5-3 7-3s3.5 3 7 3 3.5-3 7-3 3.5 3 7 3" />
-              <path d="M16 3v10M12 9l4 4 4-4" />
-            </svg>
+          <div className="w-8 h-8 rounded-lg bg-[#0075de] text-white flex items-center justify-center shadow-xs shrink-0 font-bold text-sm">
+            🌊
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-base font-bold tracking-tight text-[#0e2429] dark:text-[#e2eeee] font-display whitespace-nowrap">
-              Thai Flood Watch
+            <span className="text-base font-bold tracking-tight text-[#000000] dark:text-[#ffffff] font-display whitespace-nowrap">
+              ThaiFlood<span className="text-[#0075de]">.online</span>
             </span>
-            <span className="text-xs text-[#53676b] dark:text-[#91a6a9] font-medium hidden md:inline">
+            <span className="text-xs text-[#615d59] dark:text-[#9b9a97] font-medium hidden md:inline">
               เฝ้าระวังน้ำท่วมไทย
             </span>
           </div>
 
-          {/* Quick live indicator */}
-          <div className="hidden xl:flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#f4f8f7] dark:bg-[#162b2e] border border-[#d2dedd] dark:border-[#233a3d] text-[11px] text-[#53676b] dark:text-[#91a6a9] font-mono-num ml-1">
-            <span className={`inline-block w-2 h-2 rounded-full ${overflowCount > 0 ? 'bg-red-500 animate-pulse' : 'bg-emerald-500'}`} />
+          {/* Quick live indicator - Notion badge-pill */}
+          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#f6f5f4] dark:bg-[#252525] border border-[#e6e6e6] dark:border-[#2f2f2f] text-[11px] text-[#615d59] dark:text-[#9b9a97] font-mono-num ml-1">
+            <span className={`inline-block w-2 h-2 rounded-full ${overflowCount > 0 ? 'bg-[#e03e3e] animate-pulse' : 'bg-[#1aae39]'}`} />
             <span>{isLoading ? 'กำลังโหลด…' : updatedAt ? clock(updatedAt) : 'สด'}</span>
           </div>
         </div>
 
-        {/* Zone 2: Navigation & View Mode Switcher */}
-        <nav className="flex items-center p-0.5 rounded-xl bg-[#f4f8f7] dark:bg-[#162b2e] border border-[#d2dedd] dark:border-[#233a3d] text-xs order-last lg:order-none w-full lg:w-auto overflow-x-auto py-1">
+        {/* Zone 2: Navigation & View Mode Switcher - Notion style segment */}
+        <nav className="flex items-center p-1 rounded-lg bg-[#f6f5f4] dark:bg-[#202020] border border-[#e6e6e6] dark:border-[#2f2f2f] text-xs order-last lg:order-none w-full lg:w-auto overflow-x-auto gap-0.5">
           <button
             onClick={() => onSelectView('map')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-lg font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'map'
-                ? 'bg-white dark:bg-[#112225] text-[#0a6c86] dark:text-[#3fb6d3] shadow-xs font-semibold'
-                : 'text-[#53676b] dark:text-[#91a6a9] hover:text-[#0e2429]'
+                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
+                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
             }`}
           >
             <Map className="w-3.5 h-3.5" />
@@ -75,10 +71,10 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onSelectView('analytics')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-lg font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'analytics'
-                ? 'bg-white dark:bg-[#112225] text-[#0a6c86] dark:text-[#3fb6d3] shadow-xs font-semibold'
-                : 'text-[#53676b] dark:text-[#91a6a9] hover:text-[#0e2429]'
+                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
+                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
             }`}
           >
             <BarChart3 className="w-3.5 h-3.5" />
@@ -87,10 +83,10 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onSelectView('radar')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-lg font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'radar'
-                ? 'bg-white dark:bg-[#112225] text-[#0a6c86] dark:text-[#3fb6d3] shadow-xs font-semibold'
-                : 'text-[#53676b] dark:text-[#91a6a9] hover:text-[#0e2429]'
+                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
+                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
             }`}
           >
             <CloudRain className="w-3.5 h-3.5" />
@@ -98,35 +94,59 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           <button
-            onClick={() => onSelectView('cctv')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-lg font-medium transition cursor-pointer whitespace-nowrap ${
-              currentView === 'cctv'
-                ? 'bg-white dark:bg-[#112225] text-rose-600 dark:text-rose-400 shadow-xs font-semibold'
-                : 'text-[#53676b] dark:text-[#91a6a9] hover:text-[#0e2429]'
+            onClick={() => onSelectView('forecast')}
+            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+              currentView === 'forecast'
+                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
+                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
             }`}
           >
-            <Video className="w-3.5 h-3.5 text-rose-500 animate-pulse" />
+            <CloudSun className="w-3.5 h-3.5 text-[#dd5b00]" />
+            <span>พยากรณ์อากาศ 5 วัน</span>
+          </button>
+
+          <button
+            onClick={() => onSelectView('cctv')}
+            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+              currentView === 'cctv'
+                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
+                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
+            }`}
+          >
+            <Video className="w-3.5 h-3.5 text-[#ff64c8]" />
             <span>กล้อง CCTV สด</span>
           </button>
 
           <button
+            onClick={() => onSelectView('aid')}
+            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+              currentView === 'aid'
+                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
+                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
+            }`}
+          >
+            <ShieldAlert className="w-3.5 h-3.5 text-[#2a9d99]" />
+            <span>ศูนย์ช่วยเหลือ & ถนนน้ำท่วม</span>
+          </button>
+
+          <button
             onClick={() => onSelectView('table')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-lg font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'table'
-                ? 'bg-white dark:bg-[#112225] text-[#0a6c86] dark:text-[#3fb6d3] shadow-xs font-semibold'
-                : 'text-[#53676b] dark:text-[#91a6a9] hover:text-[#0e2429]'
+                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
+                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
             }`}
           >
             <Table className="w-3.5 h-3.5" />
-            <span>ตารางข้อมูล/Excel</span>
+            <span>ตารางข้อมูล</span>
           </button>
 
           <button
             onClick={() => onSelectView('prep')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-lg font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'prep'
-                ? 'bg-white dark:bg-[#112225] text-[#0a6c86] dark:text-[#3fb6d3] shadow-xs font-semibold'
-                : 'text-[#53676b] dark:text-[#91a6a9] hover:text-[#0e2429]'
+                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
+                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
             }`}
           >
             <Calculator className="w-3.5 h-3.5" />
@@ -135,10 +155,10 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onSelectView('community')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-lg font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'community'
-                ? 'bg-white dark:bg-[#112225] text-[#0a6c86] dark:text-[#3fb6d3] shadow-xs font-semibold'
-                : 'text-[#53676b] dark:text-[#91a6a9] hover:text-[#0e2429]'
+                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
+                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
             }`}
           >
             <Users className="w-3.5 h-3.5" />
@@ -147,10 +167,10 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onSelectView('all')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-lg font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'all'
-                ? 'bg-white dark:bg-[#112225] text-[#0a6c86] dark:text-[#3fb6d3] shadow-xs font-semibold'
-                : 'text-[#53676b] dark:text-[#91a6a9] hover:text-[#0e2429]'
+                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
+                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
             }`}
           >
             <LayoutGrid className="w-3.5 h-3.5" />
@@ -158,33 +178,33 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </nav>
 
-        {/* Zone 3: Actions (SOS, Emergency, Summary, Refresh, Theme) */}
-        <div className="flex items-center gap-1.5 text-xs">
-          {/* SOS Beacon CTA */}
+        {/* Zone 3: Notion-style Actions */}
+        <div className="flex items-center gap-2 text-xs">
+          {/* Primary Action: Notion Blue or Red Pill CTA */}
           <button
             onClick={onOpenSosModal}
-            className="flex items-center gap-1 py-1.5 px-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold shadow-xs transition cursor-pointer whitespace-nowrap animate-pulse"
+            className="flex items-center gap-1.5 py-1.5 px-3.5 rounded-full bg-[#e03e3e] hover:bg-[#c92a2a] text-white font-medium shadow-xs transition cursor-pointer whitespace-nowrap active:scale-95"
           >
             <AlertOctagon className="w-3.5 h-3.5" />
             <span>ขอความช่วยเหลือ (SOS)</span>
           </button>
 
-          {/* Emergency Assistance */}
+          {/* Emergency Assistance - Notion button-utility */}
           <button
             onClick={onOpenEmergencyModal}
-            className="hidden sm:flex items-center gap-1 py-1.5 px-2 rounded-lg border border-red-300 dark:border-red-900/60 bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 font-semibold transition cursor-pointer whitespace-nowrap"
+            className="hidden sm:flex items-center gap-1.5 py-1.5 px-3 rounded-md border border-[#e6e6e6] dark:border-[#2f2f2f] bg-white dark:bg-[#202020] text-[#31302e] dark:text-[#d4d4d4] hover:bg-[#f6f5f4] dark:hover:bg-[#252525] font-medium transition cursor-pointer whitespace-nowrap"
           >
-            <PhoneCall className="w-3.5 h-3.5" />
+            <PhoneCall className="w-3.5 h-3.5 text-[#0075de]" />
             <span>สายด่วน 1784</span>
           </button>
 
-          {/* Export Summary */}
+          {/* Export Summary - Notion button-utility */}
           <button
             onClick={onOpenSummaryModal}
-            className="hidden md:flex items-center gap-1 py-1.5 px-2 rounded-lg border border-[#d2dedd] dark:border-[#233a3d] bg-white dark:bg-[#162b2e] hover:bg-[#f4f8f7] text-[#0e2429] dark:text-[#e2eeee] transition cursor-pointer whitespace-nowrap font-medium"
+            className="hidden md:flex items-center gap-1.5 py-1.5 px-3 rounded-md border border-[#e6e6e6] dark:border-[#2f2f2f] bg-white dark:bg-[#202020] hover:bg-[#f6f5f4] dark:hover:bg-[#252525] text-[#31302e] dark:text-[#d4d4d4] transition cursor-pointer whitespace-nowrap font-medium"
             title="คัดลอกสรุปสถานการณ์"
           >
-            <FileText className="w-3.5 h-3.5 text-[#0a6c86] dark:text-[#3fb6d3]" />
+            <FileText className="w-3.5 h-3.5 text-[#0075de]" />
             <span>สรุปข้อมูล</span>
           </button>
 
@@ -192,7 +212,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={onRefresh}
             disabled={isLoading}
-            className="p-1.5 rounded-lg border border-[#d2dedd] dark:border-[#233a3d] bg-white dark:bg-[#162b2e] hover:bg-[#f4f8f7] text-[#53676b] dark:text-[#91a6a9] transition cursor-pointer disabled:opacity-50"
+            className="p-1.5 rounded-md border border-[#e6e6e6] dark:border-[#2f2f2f] bg-white dark:bg-[#202020] hover:bg-[#f6f5f4] dark:hover:bg-[#252525] text-[#615d59] dark:text-[#9b9a97] transition cursor-pointer disabled:opacity-50"
             title="รีเฟรชข้อมูล"
             aria-label="รีเฟรชข้อมูล"
           >
@@ -202,11 +222,11 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Theme switcher */}
           <button
             onClick={onToggleTheme}
-            className="p-1.5 rounded-lg border border-[#d2dedd] dark:border-[#233a3d] bg-white dark:bg-[#162b2e] hover:bg-[#f4f8f7] text-[#53676b] dark:text-[#91a6a9] transition cursor-pointer"
+            className="p-1.5 rounded-md border border-[#e6e6e6] dark:border-[#2f2f2f] bg-white dark:bg-[#202020] hover:bg-[#f6f5f4] dark:hover:bg-[#252525] text-[#615d59] dark:text-[#9b9a97] transition cursor-pointer"
             aria-label="เปลี่ยนธีม"
             title={isDark ? 'สลับเป็นธีมสว่าง' : 'สลับเป็นธีมมืด'}
           >
-            {isDark ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5" />}
+            {isDark ? <Sun className="w-3.5 h-3.5 text-[#f2cb38]" /> : <Moon className="w-3.5 h-3.5" />}
           </button>
         </div>
       </div>
