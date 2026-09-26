@@ -1,0 +1,6 @@
+{
+  "name": "Thai Flood Watch - เฝ้าระวังน้ำท่วมไทย",
+  "description": "แดชบอร์ดสถานการณ์น้ำท่วมประเทศไทยแบบเรียลไทม์: ระดับน้ำ ฝน 24 ชม. เขื่อน แผนที่จุดวิกฤต ข่าว และพยากรณ์",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
