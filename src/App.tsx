@@ -4,7 +4,8 @@ import { KpiCards } from './components/KpiCards';
 import { FloodMap } from './components/FloodMap';
 import { SidePanel } from './components/SidePanel';
 import { WindyEmbed } from './components/WindyEmbed';
-import { LiveRadarViewer } from './components/LiveRadarViewer';
+import { WaterFlowTracker } from './components/WaterFlowTracker';
+import { GoogleEarthSoilWeather } from './components/GoogleEarthSoilWeather';
 import { WeatherForecastViewer } from './components/WeatherForecastViewer';
 import { CctvViewer } from './components/CctvViewer';
 import { CitizenAidHub } from './components/CitizenAidHub';
@@ -43,12 +44,16 @@ export default function App() {
   // View mode tab
   const [currentView, setCurrentView] = useState<ViewMode>('map');
 
-  // Dark mode
+  // Light / Dark mode - Default to Notion Light Warm Paper Daylight theme as requested
   const [isDark, setIsDark] = useState<boolean>(() => {
     try {
-      const stored = localStorage.getItem('thai_flood_theme');
-      if (stored) return stored === 'dark';
-      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const stored = localStorage.getItem('thai_flood_theme_mode');
+      if (stored === 'dark') return true;
+      if (stored === 'light') return false;
+      // Default to Notion light theme
+      localStorage.setItem('thai_flood_theme_mode', 'light');
+      localStorage.setItem('thai_flood_theme', 'light');
+      return false;
     } catch {
       return false;
     }
@@ -71,11 +76,13 @@ export default function App() {
     if (isDark) {
       document.documentElement.classList.add('dark');
       try {
+        localStorage.setItem('thai_flood_theme_mode', 'dark');
         localStorage.setItem('thai_flood_theme', 'dark');
       } catch {}
     } else {
       document.documentElement.classList.remove('dark');
       try {
+        localStorage.setItem('thai_flood_theme_mode', 'light');
         localStorage.setItem('thai_flood_theme', 'light');
       } catch {}
     }
@@ -323,7 +330,7 @@ export default function App() {
 
             {/* Map & Side Panel Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-stretch">
-              <div className="lg:col-span-7 xl:col-span-8 h-[520px] sm:h-[640px]">
+              <div className="lg:col-span-7 xl:col-span-8 h-[400px] sm:h-[520px] md:h-[600px] lg:h-[640px]">
                 <FloodMap
                   stations={stations}
                   rain={rain}
@@ -338,7 +345,7 @@ export default function App() {
                 />
               </div>
 
-              <div className="lg:col-span-5 xl:col-span-4 h-[520px] sm:h-[640px]">
+              <div className="lg:col-span-5 xl:col-span-4 h-[440px] sm:h-[520px] md:h-[600px] lg:h-[640px]">
                 <SidePanel
                   stations={stations}
                   news={news}
@@ -374,11 +381,24 @@ export default function App() {
           </section>
         )}
 
-        {/* VIEW 3: RADARS & FORECAST (Windy + TMD & BMA Weather Radars) */}
-        {(currentView === 'radar' || currentView === 'all') && (
+        {/* VIEW: WATER FLOW PROGRESSION (เส้นทางมวลน้ำ & ทิศทางการไหล & ระดับน้ำแต่ละจุด) */}
+        {(currentView === 'flow' || currentView === 'all') && (
           <section className="space-y-4">
-            <LiveRadarViewer />
-            <WindyEmbed />
+            <WaterFlowTracker
+              stations={stations}
+              onFlyToCoords={handleFlyToCoords}
+              onSelectStation={handleSelectStation}
+            />
+          </section>
+        )}
+
+        {/* VIEW: GOOGLE EARTH & GLOFAS SOIL MOISTURE & HYDROLOGY FORECAST */}
+        {(currentView === 'soil' || currentView === 'all') && (
+          <section className="space-y-4">
+            <GoogleEarthSoilWeather
+              initialProvinceName={selectedProvince || 'กรุงเทพมหานคร'}
+              onFlyToCoords={handleFlyToCoords}
+            />
           </section>
         )}
 
@@ -389,6 +409,7 @@ export default function App() {
               initialProvinceName={selectedProvince || 'กรุงเทพมหานคร'}
               onFlyToCoords={handleFlyToCoords}
             />
+            <WindyEmbed />
           </section>
         )}
 

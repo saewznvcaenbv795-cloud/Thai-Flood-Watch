@@ -39,28 +39,28 @@ export const StationDetailDrawer: React.FC<StationDetailDrawerProps> = ({ statio
       <div className="flex-1" onClick={onClose} />
 
       {/* Drawer Body */}
-      <div className="w-full max-w-md bg-white dark:bg-[#112225] border-l border-[#d2dedd] dark:border-[#233a3d] shadow-2xl flex flex-col h-full overflow-hidden animate-in slide-in-from-right duration-300">
+      <div className="w-full max-w-md bg-white dark:bg-[#202020] border-l border-[#e6e6e6] dark:border-[#2f2f2f] shadow-2xl flex flex-col h-full overflow-hidden animate-in slide-in-from-right duration-300">
         {/* Header */}
-        <div className="px-5 py-4 border-b border-[#d2dedd] dark:border-[#233a3d] flex items-start justify-between gap-3 bg-[#f4f8f7] dark:bg-[#162b2e]/70">
+        <div className="px-5 py-4 border-b border-[#e6e6e6] dark:border-[#2f2f2f] flex items-start justify-between gap-3 bg-[#f6f5f4] dark:bg-[#252525]">
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${isOverflow ? 'bg-red-500' : isHigh ? 'bg-amber-500' : 'bg-emerald-500'}`} />
-              <span className="text-xs font-semibold text-[#53676b] dark:text-[#91a6a9] tracking-wide">
+              <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${isOverflow ? 'bg-[#e03e3e]' : isHigh ? 'bg-[#dd5b00]' : 'bg-[#1aae39]'}`} />
+              <span className="text-xs font-semibold text-[#615d59] dark:text-[#9b9a97] tracking-wide">
                 {station.agency} · {station.basin || 'ลุ่มน้ำหลัก'}
               </span>
             </div>
-            <h3 className="text-lg font-bold text-[#0e2429] dark:text-[#e2eeee] leading-tight font-display">
+            <h3 className="text-lg font-bold text-[#000000] dark:text-[#ffffff] leading-tight font-display">
               {station.name}
             </h3>
-            <div className="text-xs text-[#53676b] dark:text-[#91a6a9] mt-0.5 flex items-center gap-1">
-              <MapPin className="w-3.5 h-3.5 text-[#0a6c86] dark:text-[#3fb6d3]" />
+            <div className="text-xs text-[#615d59] dark:text-[#9b9a97] mt-0.5 flex items-center gap-1">
+              <MapPin className="w-3.5 h-3.5 text-[#0075de]" />
               <span>{station.amphoe ? `อ.${station.amphoe} ` : ''}จ.{station.province}</span>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#53676b] hover:text-[#0e2429] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition cursor-pointer"
+            className="p-1.5 rounded-md text-[#615d59] hover:text-[#000000] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition cursor-pointer"
             aria-label="ปิดหน้าต่าง"
           >
             <X className="w-5 h-5" />
@@ -72,14 +72,14 @@ export const StationDetailDrawer: React.FC<StationDetailDrawerProps> = ({ statio
           {/* Main Status Callout */}
           <div className={`p-4 rounded-xl border ${
             isOverflow
-              ? 'bg-red-500/10 border-red-500/30 text-red-950 dark:text-red-200'
+              ? 'bg-[#e03e3e]/10 border-[#e03e3e]/30 text-[#e03e3e] dark:text-[#ff6464]'
               : isHigh
-              ? 'bg-amber-500/10 border-amber-500/30 text-amber-950 dark:text-amber-200'
-              : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-950 dark:text-emerald-200'
+              ? 'bg-[#dd5b00]/10 border-[#dd5b00]/30 text-[#dd5b00] dark:text-[#ff8c42]'
+              : 'bg-[#1aae39]/10 border-[#1aae39]/30 text-[#1aae39] dark:text-[#42cc68]'
           }`}>
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-1.5 font-bold text-sm">
-                {isOverflow ? <ShieldAlert className="w-4 h-4 text-red-600" /> : <Waves className="w-4 h-4 text-amber-600" />}
+                {isOverflow ? <ShieldAlert className="w-4 h-4 text-[#e03e3e]" /> : <Waves className="w-4 h-4 text-[#dd5b00]" />}
                 <span>สถานะ: {lvConfig.label}</span>
               </div>
               <span className="font-mono-num font-bold text-lg">
@@ -88,10 +88,10 @@ export const StationDetailDrawer: React.FC<StationDetailDrawerProps> = ({ statio
             </div>
 
             {/* Gauge bar */}
-            <div className="w-full bg-black/10 dark:bg-white/10 h-3 rounded-full overflow-hidden mb-2">
+            <div className="w-full bg-black/10 dark:bg-white/10 h-2.5 rounded-full overflow-hidden mb-2">
               <div
                 className={`h-full rounded-full transition-all duration-700 ${
-                  isOverflow ? 'bg-red-600' : isHigh ? 'bg-amber-500' : 'bg-emerald-600'
+                  isOverflow ? 'bg-[#e03e3e]' : isHigh ? 'bg-[#dd5b00]' : 'bg-[#1aae39]'
                 }`}
                 style={{ width: `${Math.min(station.pct ?? 0, 100)}%` }}
               />
@@ -105,49 +105,49 @@ export const StationDetailDrawer: React.FC<StationDetailDrawerProps> = ({ statio
 
           {/* Telemetry Metrics Grid */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold text-[#53676b] dark:text-[#91a6a9] tracking-wider uppercase">
+            <h4 className="text-xs font-bold text-[#615d59] dark:text-[#9b9a97] tracking-wider uppercase">
               ข้อมูลระดับน้ำโทรมาตร
             </h4>
 
             <div className="grid grid-cols-2 gap-2.5">
-              <div className="p-3 rounded-xl bg-[#f4f8f7] dark:bg-[#162b2e] border border-[#d2dedd] dark:border-[#233a3d]">
-                <div className="text-[11px] text-[#53676b] dark:text-[#91a6a9] mb-0.5">ระดับน้ำปัจจุบัน</div>
-                <div className="text-lg font-bold font-mono-num text-[#0e2429] dark:text-[#e2eeee]">
+              <div className="p-3 rounded-lg bg-[#f6f5f4] dark:bg-[#252525] border border-[#e6e6e6] dark:border-[#2f2f2f]">
+                <div className="text-[11px] text-[#615d59] dark:text-[#9b9a97] mb-0.5">ระดับน้ำปัจจุบัน</div>
+                <div className="text-lg font-bold font-mono-num text-[#000000] dark:text-[#ffffff]">
                   {fmt(station.msl, 2)} <span className="text-xs font-normal">ม.รทก.</span>
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-[#f4f8f7] dark:bg-[#162b2e] border border-[#d2dedd] dark:border-[#233a3d]">
-                <div className="text-[11px] text-[#53676b] dark:text-[#91a6a9] mb-0.5">ระดับตลิ่งต่ำสุด</div>
-                <div className="text-lg font-bold font-mono-num text-[#0e2429] dark:text-[#e2eeee]">
+              <div className="p-3 rounded-lg bg-[#f6f5f4] dark:bg-[#252525] border border-[#e6e6e6] dark:border-[#2f2f2f]">
+                <div className="text-[11px] text-[#615d59] dark:text-[#9b9a97] mb-0.5">ระดับตลิ่งต่ำสุด</div>
+                <div className="text-lg font-bold font-mono-num text-[#000000] dark:text-[#ffffff]">
                   {station.bank !== null ? `${fmt(station.bank, 2)} ` : '– '}
                   <span className="text-xs font-normal">ม.รทก.</span>
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-[#f4f8f7] dark:bg-[#162b2e] border border-[#d2dedd] dark:border-[#233a3d]">
-                <div className="text-[11px] text-[#53676b] dark:text-[#91a6a9] mb-0.5">
+              <div className="p-3 rounded-lg bg-[#f6f5f4] dark:bg-[#252525] border border-[#e6e6e6] dark:border-[#2f2f2f]">
+                <div className="text-[11px] text-[#615d59] dark:text-[#9b9a97] mb-0.5">
                   {station.diffBankText || 'ต่างจากตลิ่ง'}
                 </div>
-                <div className={`text-lg font-bold font-mono-num ${isOverflow ? 'text-red-600 dark:text-red-400' : 'text-[#0e2429] dark:text-[#e2eeee]'}`}>
+                <div className={`text-lg font-bold font-mono-num ${isOverflow ? 'text-[#e03e3e]' : 'text-[#000000] dark:text-[#ffffff]'}`}>
                   {station.diffBank !== null ? `${fmt(station.diffBank, 2)} ` : '– '}
                   <span className="text-xs font-normal">ม.</span>
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-[#f4f8f7] dark:bg-[#162b2e] border border-[#d2dedd] dark:border-[#233a3d]">
-                <div className="text-[11px] text-[#53676b] dark:text-[#91a6a9] mb-0.5">แนวโน้ม 24 ชม.</div>
+              <div className="p-3 rounded-lg bg-[#f6f5f4] dark:bg-[#252525] border border-[#e6e6e6] dark:border-[#2f2f2f]">
+                <div className="text-[11px] text-[#615d59] dark:text-[#9b9a97] mb-0.5">แนวโน้ม 24 ชม.</div>
                 <div className="text-sm font-bold font-mono-num flex items-center gap-1 mt-1">
                   {station.delta !== null && station.delta > 0 ? (
-                    <span className="text-red-600 dark:text-red-400 flex items-center gap-0.5">
+                    <span className="text-[#e03e3e] flex items-center gap-0.5 font-semibold">
                       <TrendingUp className="w-4 h-4" /> +{fmt(station.delta, 2)} ม.
                     </span>
                   ) : station.delta !== null && station.delta < 0 ? (
-                    <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5">
+                    <span className="text-[#1aae39] flex items-center gap-0.5">
                       <TrendingDown className="w-4 h-4" /> -{fmt(Math.abs(station.delta), 2)} ม.
                     </span>
                   ) : (
-                    <span className="text-[#53676b] dark:text-[#91a6a9] flex items-center gap-0.5">
+                    <span className="text-[#615d59] dark:text-[#9b9a97] flex items-center gap-0.5">
                       <Minus className="w-4 h-4" /> ทรงตัว
                     </span>
                   )}
@@ -157,22 +157,22 @@ export const StationDetailDrawer: React.FC<StationDetailDrawerProps> = ({ statio
           </div>
 
           {/* Timing & Location */}
-          <div className="p-3.5 rounded-xl border border-[#d2dedd] dark:border-[#233a3d] bg-white dark:bg-[#112225] space-y-2 text-xs">
-            <div className="flex items-center justify-between text-[#53676b] dark:text-[#91a6a9]">
+          <div className="p-3.5 rounded-lg border border-[#e6e6e6] dark:border-[#2f2f2f] bg-white dark:bg-[#202020] space-y-2 text-xs">
+            <div className="flex items-center justify-between text-[#615d59] dark:text-[#9b9a97]">
               <span>เวลาตรวจวัด:</span>
-              <span className="font-mono-num font-semibold text-[#0e2429] dark:text-[#e2eeee]">
+              <span className="font-mono-num font-semibold text-[#000000] dark:text-[#ffffff]">
                 {clock(station.time)} ({ago(station.time)})
               </span>
             </div>
-            <div className="flex items-center justify-between text-[#53676b] dark:text-[#91a6a9]">
+            <div className="flex items-center justify-between text-[#615d59] dark:text-[#9b9a97]">
               <span>พิกัดสถานี:</span>
-              <span className="font-mono-num font-medium text-[#0e2429] dark:text-[#e2eeee]">
+              <span className="font-mono-num font-medium text-[#000000] dark:text-[#ffffff]">
                 {fmt(station.lat, 4)}, {fmt(station.lng, 4)}
               </span>
             </div>
-            <div className="flex items-center justify-between text-[#53676b] dark:text-[#91a6a9]">
+            <div className="flex items-center justify-between text-[#615d59] dark:text-[#9b9a97]">
               <span>หน่วยงานเจ้าของสถานี:</span>
-              <span className="font-medium text-[#0a6c86] dark:text-[#3fb6d3]">
+              <span className="font-medium text-[#0075de] dark:text-[#62aef0]">
                 {station.agency}
               </span>
             </div>
@@ -180,10 +180,10 @@ export const StationDetailDrawer: React.FC<StationDetailDrawerProps> = ({ statio
         </div>
 
         {/* Action Footer */}
-        <div className="p-4 border-t border-[#d2dedd] dark:border-[#233a3d] bg-[#f4f8f7] dark:bg-[#162b2e]/60 flex items-center gap-2">
+        <div className="p-4 border-t border-[#e6e6e6] dark:border-[#2f2f2f] bg-[#f6f5f4] dark:bg-[#252525] flex items-center gap-2">
           <button
             onClick={handleCopySummary}
-            className="flex-1 py-2 px-3 rounded-lg bg-[#0a6c86] hover:bg-[#095f76] text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
+            className="flex-1 py-2 px-3.5 rounded-full bg-[#0075de] hover:bg-[#005bab] text-white font-medium text-xs flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-95 shadow-xs"
           >
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Copy className="w-3.5 h-3.5" />}
             <span>{copied ? 'คัดลอกข้อความแล้ว' : 'คัดลอกสรุปสถานีนี้'}</span>
@@ -193,12 +193,12 @@ export const StationDetailDrawer: React.FC<StationDetailDrawerProps> = ({ statio
             href={googleMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="py-2 px-3 rounded-lg border border-[#d2dedd] dark:border-[#233a3d] bg-white dark:bg-[#112225] text-[#0e2429] dark:text-[#e2eeee] hover:bg-black/5 font-semibold text-xs flex items-center gap-1 transition"
+            className="py-2 px-3.5 rounded-full border border-[#e6e6e6] dark:border-[#2f2f2f] bg-white dark:bg-[#202020] text-[#31302e] dark:text-[#d4d4d4] hover:bg-[#f6f5f4] font-medium text-xs flex items-center gap-1 transition"
             title="เปิดแผนที่ Google Maps"
           >
-            <Compass className="w-3.5 h-3.5" />
+            <Compass className="w-3.5 h-3.5 text-[#0075de]" />
             <span>Google Maps</span>
-            <ExternalLink className="w-3 h-3 text-[#53676b]" />
+            <ExternalLink className="w-3 h-3 text-[#615d59]" />
           </a>
         </div>
       </div>

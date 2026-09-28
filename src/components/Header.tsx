@@ -1,8 +1,8 @@
 import React from 'react';
-import { RefreshCw, Sun, Moon, AlertOctagon, FileText, PhoneCall, Map, BarChart3, CloudRain, Users, LayoutGrid, Table, Calculator, Video, ShieldAlert, CloudSun } from 'lucide-react';
+import { RefreshCw, Sun, Moon, AlertOctagon, FileText, PhoneCall, Map, BarChart3, CloudRain, Users, LayoutGrid, Table, Calculator, Video, ShieldAlert, CloudSun, Waves, Globe } from 'lucide-react';
 import { clock } from '../utils/formatters';
 
-export type ViewMode = 'map' | 'analytics' | 'radar' | 'forecast' | 'cctv' | 'aid' | 'table' | 'prep' | 'community' | 'all';
+export type ViewMode = 'map' | 'flow' | 'soil' | 'forecast' | 'analytics' | 'cctv' | 'aid' | 'table' | 'prep' | 'community' | 'all';
 
 interface HeaderProps {
   updatedAt: Date | null;
@@ -56,10 +56,10 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Zone 2: Navigation & View Mode Switcher - Notion style segment */}
-        <nav className="flex items-center p-1 rounded-lg bg-[#f6f5f4] dark:bg-[#202020] border border-[#e6e6e6] dark:border-[#2f2f2f] text-xs order-last lg:order-none w-full lg:w-auto overflow-x-auto gap-0.5">
+        <nav className="flex items-center p-1 rounded-lg bg-[#f6f5f4] dark:bg-[#202020] border border-[#e6e6e6] dark:border-[#2f2f2f] text-xs order-last lg:order-none w-full lg:w-auto overflow-x-auto gap-0.5 scrollbar-none">
           <button
             onClick={() => onSelectView('map')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'map'
                 ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
                 : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
@@ -70,32 +70,32 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           <button
-            onClick={() => onSelectView('analytics')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
-              currentView === 'analytics'
+            onClick={() => onSelectView('flow')}
+            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+              currentView === 'flow'
                 ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
                 : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
             }`}
           >
-            <BarChart3 className="w-3.5 h-3.5" />
-            <span>จังหวัด & เขื่อน</span>
+            <Waves className="w-3.5 h-3.5 text-[#0075de]" />
+            <span>เส้นทางมวลน้ำ & การไหล</span>
           </button>
 
           <button
-            onClick={() => onSelectView('radar')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
-              currentView === 'radar'
+            onClick={() => onSelectView('soil')}
+            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+              currentView === 'soil'
                 ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
                 : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
             }`}
           >
-            <CloudRain className="w-3.5 h-3.5" />
-            <span>เรดาร์ฝน</span>
+            <Globe className="w-3.5 h-3.5 text-[#2a9d99]" />
+            <span>ดิน & น้ำ Google</span>
           </button>
 
           <button
             onClick={() => onSelectView('forecast')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'forecast'
                 ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
                 : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
@@ -106,8 +106,20 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           <button
+            onClick={() => onSelectView('analytics')}
+            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+              currentView === 'analytics'
+                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
+                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
+            }`}
+          >
+            <BarChart3 className="w-3.5 h-3.5" />
+            <span>จังหวัด & เขื่อน</span>
+          </button>
+
+          <button
             onClick={() => onSelectView('cctv')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'cctv'
                 ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
                 : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
@@ -119,7 +131,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onSelectView('aid')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'aid'
                 ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
                 : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
@@ -131,7 +143,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onSelectView('table')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'table'
                 ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
                 : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
@@ -143,7 +155,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onSelectView('prep')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'prep'
                 ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
                 : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
@@ -155,7 +167,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onSelectView('community')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'community'
                 ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
                 : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
@@ -167,7 +179,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onSelectView('all')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'all'
                 ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
                 : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
@@ -179,14 +191,15 @@ export const Header: React.FC<HeaderProps> = ({
         </nav>
 
         {/* Zone 3: Notion-style Actions */}
-        <div className="flex items-center gap-2 text-xs">
+        <div className="flex items-center gap-1.5 sm:gap-2 text-xs">
           {/* Primary Action: Notion Blue or Red Pill CTA */}
           <button
             onClick={onOpenSosModal}
-            className="flex items-center gap-1.5 py-1.5 px-3.5 rounded-full bg-[#e03e3e] hover:bg-[#c92a2a] text-white font-medium shadow-xs transition cursor-pointer whitespace-nowrap active:scale-95"
+            className="flex items-center gap-1 sm:gap-1.5 py-1.5 px-2.5 sm:px-3.5 rounded-full bg-[#e03e3e] hover:bg-[#c92a2a] text-white font-medium shadow-xs transition cursor-pointer whitespace-nowrap active:scale-95 text-xs"
           >
-            <AlertOctagon className="w-3.5 h-3.5" />
-            <span>ขอความช่วยเหลือ (SOS)</span>
+            <AlertOctagon className="w-3.5 h-3.5 shrink-0" />
+            <span className="hidden xs:inline">ขอความช่วยเหลือ (SOS)</span>
+            <span className="xs:hidden">SOS</span>
           </button>
 
           {/* Emergency Assistance - Notion button-utility */}

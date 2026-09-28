@@ -23,39 +23,39 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({ isOpen, onClose 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200">
-      <div className="w-full max-w-2xl bg-white dark:bg-[#112225] rounded-2xl border border-[#d2dedd] dark:border-[#233a3d] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-xs transition-opacity animate-in fade-in duration-200">
+      <div className="w-full max-w-2xl bg-white dark:bg-[#202020] rounded-xl border border-[#e6e6e6] dark:border-[#2f2f2f] shadow-[0_23px_52px_rgba(0,0,0,0.08)] flex flex-col max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="px-5 py-4 border-b border-[#d2dedd] dark:border-[#233a3d] flex items-center justify-between bg-red-500/10 dark:bg-red-500/15">
+        <div className="px-5 py-4 border-b border-[#e6e6e6] dark:border-[#2f2f2f] flex items-center justify-between bg-[#f6f5f4] dark:bg-[#252525]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-[#e03e3e] text-white flex items-center justify-center font-bold">
               <ShieldAlert className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-red-700 dark:text-red-400 font-display">
+              <h3 className="text-base font-bold text-[#e03e3e] dark:text-[#ff6464] font-display">
                 ศูนย์ช่วยเหลือฉุกเฉิน & คำแนะนำรับมือน้ำท่วม
               </h3>
-              <p className="text-xs text-[#53676b] dark:text-[#91a6a9]">
+              <p className="text-xs text-[#615d59] dark:text-[#9b9a97]">
                 สายด่วน 24 ชั่วโมง และแนวทางปฏิบัติตนเพื่อความปลอดภัย
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#53676b] hover:text-[#0e2429] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition cursor-pointer"
+            className="p-1.5 rounded-md text-[#615d59] hover:text-[#000000] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tab switch */}
-        <div className="flex border-b border-[#d2dedd] dark:border-[#233a3d] bg-[#f4f8f7] dark:bg-[#162b2e] px-4 pt-2 gap-2 text-xs font-semibold">
+        <div className="flex border-b border-[#e6e6e6] dark:border-[#2f2f2f] bg-[#f6f5f4] dark:bg-[#252525] px-4 pt-2 gap-2 text-xs font-semibold">
           <button
             onClick={() => setActiveTab('hotlines')}
             className={`pb-2.5 px-3 border-b-2 transition cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'hotlines'
-                ? 'border-red-500 text-red-600 dark:text-red-400'
-                : 'border-transparent text-[#53676b] dark:text-[#91a6a9] hover:text-[#0e2429]'
+                ? 'border-[#e03e3e] text-[#e03e3e] dark:text-[#ff6464]'
+                : 'border-transparent text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000]'
             }`}
           >
             <PhoneCall className="w-3.5 h-3.5" />
@@ -65,8 +65,8 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({ isOpen, onClose 
             onClick={() => setActiveTab('guide')}
             className={`pb-2.5 px-3 border-b-2 transition cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'guide'
-                ? 'border-red-500 text-red-600 dark:text-red-400'
-                : 'border-transparent text-[#53676b] dark:text-[#91a6a9] hover:text-[#0e2429]'
+                ? 'border-[#0075de] text-[#0075de] dark:text-[#62aef0]'
+                : 'border-transparent text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000]'
             }`}
           >
             <CheckSquare className="w-3.5 h-3.5" />
@@ -82,15 +82,15 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({ isOpen, onClose 
                 <a
                   key={item.num}
                   href={`tel:${item.num}`}
-                  className={`p-3 rounded-xl border transition flex items-center justify-between group ${
+                  className={`p-3 rounded-lg border transition flex items-center justify-between group ${
                     item.primary
-                      ? 'bg-red-500/10 border-red-300 dark:border-red-900/60 hover:bg-red-500/15'
-                      : 'bg-[#f4f8f7] dark:bg-[#162b2e] border-[#d2dedd] dark:border-[#233a3d] hover:bg-white dark:hover:bg-[#1b3438]'
+                      ? 'bg-[#e03e3e]/5 border-[#e03e3e]/30 hover:bg-[#e03e3e]/10'
+                      : 'bg-[#f6f5f4] dark:bg-[#252525] border-[#e6e6e6] dark:border-[#2f2f2f] hover:bg-white'
                   }`}
                 >
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className={`text-xl font-bold font-mono-num ${item.primary ? 'text-red-600 dark:text-red-400' : 'text-[#0a6c86] dark:text-[#3fb6d3]'}`}>
+                      <span className={`text-xl font-bold font-mono-num ${item.primary ? 'text-[#e03e3e] dark:text-[#ff6464]' : 'text-[#0075de] dark:text-[#62aef0]'}`}>
                         {item.num}
                       </span>
                       {item.primary && (
@@ -99,14 +99,14 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({ isOpen, onClose 
                         </span>
                       )}
                     </div>
-                    <div className="text-xs font-semibold text-[#0e2429] dark:text-[#e2eeee] mt-0.5">
+                    <div className="text-xs font-semibold text-[#000000] dark:text-[#ffffff] mt-0.5">
                       {item.name}
                     </div>
-                    <div className="text-[11px] text-[#53676b] dark:text-[#91a6a9] line-clamp-1 mt-0.5">
+                    <div className="text-[11px] text-[#615d59] dark:text-[#9b9a97] line-clamp-1 mt-0.5">
                       {item.desc}
                     </div>
                   </div>
-                  <div className="w-9 h-9 rounded-full bg-white dark:bg-[#112225] border border-[#d2dedd] dark:border-[#233a3d] flex items-center justify-center shrink-0 group-hover:bg-[#0a6c86] group-hover:text-white transition">
+                  <div className="w-9 h-9 rounded-full bg-white dark:bg-[#202020] border border-[#e6e6e6] dark:border-[#2f2f2f] flex items-center justify-center shrink-0 group-hover:bg-[#0075de] group-hover:text-white transition">
                     <Phone className="w-4 h-4" />
                   </div>
                 </a>
@@ -115,12 +115,12 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({ isOpen, onClose 
           ) : (
             <div className="space-y-3.5 text-xs">
               {/* Step 1 */}
-              <div className="p-3.5 rounded-xl bg-[#f4f8f7] dark:bg-[#162b2e] border border-[#d2dedd] dark:border-[#233a3d]">
-                <h4 className="font-bold text-sm text-[#0e2429] dark:text-[#e2eeee] mb-2 flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs">1</span>
+              <div className="p-3.5 rounded-xl bg-[#f6f5f4] dark:bg-[#252525] border border-[#e6e6e6] dark:border-[#2f2f2f]">
+                <h4 className="font-bold text-sm text-[#000000] dark:text-[#ffffff] mb-2 flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-[#dfab01] text-white flex items-center justify-center text-xs font-mono-num font-bold">1</span>
                   <span>ก่อนน้ำท่วม (เตรียมความพร้อมล่วงหน้า)</span>
                 </h4>
-                <ul className="space-y-1.5 text-[#53676b] dark:text-[#91a6a9] pl-7 list-disc">
+                <ul className="space-y-1.5 text-[#31302e] dark:text-[#d4d4d4] pl-7 list-disc">
                   <li>ยกสิ่งของ เครื่องใช้ไฟฟ้า และเอกสารสำคัญขึ้นที่สูงหรือชั้น 2</li>
                   <li>เตรียมถุงยังชีพ: อาหารแห้ง น้ำดื่ม ยาสามัญ ไฟฉาย และพาวเวอร์แบงก์ชาร์จเต็ม</li>
                   <li>วางแนวกระสอบทรายอุดช่องทางน้ำไหลเข้าบ้าน และเตรียมอุปกรณ์ตักน้ำ</li>
@@ -129,12 +129,12 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({ isOpen, onClose 
               </div>
 
               {/* Step 2 */}
-              <div className="p-3.5 rounded-xl bg-red-500/5 dark:bg-red-500/10 border border-red-200 dark:border-red-950/60">
-                <h4 className="font-bold text-sm text-red-600 dark:text-red-400 mb-2 flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center text-xs">2</span>
+              <div className="p-3.5 rounded-xl bg-[#e03e3e]/5 dark:bg-[#e03e3e]/10 border border-[#e03e3e]/30">
+                <h4 className="font-bold text-sm text-[#e03e3e] dark:text-[#ff6464] mb-2 flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-[#e03e3e] text-white flex items-center justify-center text-xs font-mono-num font-bold">2</span>
                   <span>ขณะเกิดน้ำท่วม (เอาชีวิตรอดและป้องกันภัย)</span>
                 </h4>
-                <ul className="space-y-1.5 text-[#53676b] dark:text-[#91a6a9] pl-7 list-disc">
+                <ul className="space-y-1.5 text-[#31302e] dark:text-[#d4d4d4] pl-7 list-disc">
                   <li><b>สับคัตเอาต์ตัดกระแสไฟฟ้า</b> ชั้นที่น้ำท่วมทันที ป้องกันไฟฟ้ารั่วช็อตเสียชีวิต</li>
                   <li>อย่าเดินลุยน้ำหรือขับรถฝ่ากระแสน้ำไหลเชี่ยว (ระดับน้ำ 30 ซม. สามารถพัดรถลอยได้)</li>
                   <li>ระวังสัตว์มีพิษ (งู ตะขาบ แมงป่อง) ที่หนีน้ำขึ้นมาหลบซ่อนตามมุมบ้าน</li>
@@ -143,12 +143,12 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({ isOpen, onClose 
               </div>
 
               {/* Step 3 */}
-              <div className="p-3.5 rounded-xl bg-[#f4f8f7] dark:bg-[#162b2e] border border-[#d2dedd] dark:border-[#233a3d]">
-                <h4 className="font-bold text-sm text-[#0e2429] dark:text-[#e2eeee] mb-2 flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs">3</span>
+              <div className="p-3.5 rounded-xl bg-[#f6f5f4] dark:bg-[#252525] border border-[#e6e6e6] dark:border-[#2f2f2f]">
+                <h4 className="font-bold text-sm text-[#000000] dark:text-[#ffffff] mb-2 flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-[#0075de] text-white flex items-center justify-center text-xs font-mono-num font-bold">3</span>
                   <span>หลังน้ำลด (ฟื้นฟูอย่างปลอดภัย)</span>
                 </h4>
-                <ul className="space-y-1.5 text-[#53676b] dark:text-[#91a6a9] pl-7 list-disc">
+                <ul className="space-y-1.5 text-[#31302e] dark:text-[#d4d4d4] pl-7 list-disc">
                   <li>อย่าเพิ่งเปิดระบบไฟจนกว่าช่างไฟฟ้าผู้เชี่ยวชาญจะตรวจสอบปลั๊กและสายไฟที่จมน้ำ</li>
                   <li>สวมรองเท้าบูทและถุงมือยางขณะทำความสะอาดบ้าน ป้องกันเชื้อโรคฉี่หนูและบาดทะยัก</li>
                   <li>ถ่ายภาพความเสียหายของตัวบ้านและทรัพย์สินไว้เป็นหลักฐานยื่นขอเงินเยียวยา ปภ.</li>
@@ -159,11 +159,11 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({ isOpen, onClose 
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 border-t border-[#d2dedd] dark:border-[#233a3d] bg-[#f4f8f7] dark:bg-[#162b2e]/60 flex items-center justify-between text-xs text-[#53676b] dark:text-[#91a6a9]">
+        <div className="px-5 py-3 border-t border-[#e6e6e6] dark:border-[#2f2f2f] bg-[#f6f5f4] dark:bg-[#252525] flex items-center justify-between text-xs text-[#615d59] dark:text-[#9b9a97]">
           <span>โทรศัพท์ฉุกเฉินทุกเบอร์สามารถกดโทรได้ฟรีแม้ไม่มีเงินในซิม</span>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-lg bg-slate-800 dark:bg-slate-700 text-white font-medium hover:bg-slate-900 transition cursor-pointer"
+            className="px-4 py-1.5 rounded-full bg-[#0075de] hover:bg-[#005bab] text-white font-medium transition cursor-pointer active:scale-95"
           >
             ปิด
           </button>

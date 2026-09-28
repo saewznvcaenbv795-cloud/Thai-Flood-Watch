@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import L from 'leaflet';
-import { Layers, MapPin, Maximize2, Minimize2, ZoomIn, ZoomOut, RotateCcw, Video } from 'lucide-react';
+import { Layers, MapPin, Maximize2, Minimize2, ZoomIn, ZoomOut, RotateCcw, Video, Waves } from 'lucide-react';
 import { WaterStation, RainStation, DamData, GdacsAlert } from '../types';
 import { fmt, clock, ago, LEVELS, getRainCategory } from '../utils/formatters';
 import { FLOOD_CAMERAS } from '../data/cctvData';
+import { RIVER_BASIN_PATHS } from '../data/riverFlowData';
 
 interface FloodMapProps {
   stations: WaterStation[];
@@ -41,12 +42,14 @@ export const FloodMap: React.FC<FloodMapProps> = ({
     dam: L.LayerGroup;
     gdacs: L.LayerGroup;
     cctv: L.LayerGroup;
+    flow: L.LayerGroup;
   }>({
     wl: L.layerGroup(),
     rain: L.layerGroup(),
     dam: L.layerGroup(),
     gdacs: L.layerGroup(),
     cctv: L.layerGroup(),
+    flow: L.layerGroup(),
   });
 
   const markersMapRef = useRef<Map<string, L.Layer>>(new Map());
@@ -57,6 +60,7 @@ export const FloodMap: React.FC<FloodMapProps> = ({
   const [showDam, setShowDam] = useState(true);
   const [showGdacs, setShowGdacs] = useState(true);
   const [showCctv, setShowCctv] = useState(true);
+  const [showFlow, setShowFlow] = useState(true);
   const [onlyCrit, setOnlyCrit] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -79,6 +83,7 @@ export const FloodMap: React.FC<FloodMapProps> = ({
     layersRef.current.dam.addTo(map);
     layersRef.current.gdacs.addTo(map);
     layersRef.current.cctv.addTo(map);
+    layersRef.current.flow.addTo(map);
 
     // Global listener for popup click to open drawer
     (window as any).__openStationDrawer = (stationId: string) => {
@@ -137,7 +142,8 @@ export const FloodMap: React.FC<FloodMapProps> = ({
     sync(showDam, layersRef.current.dam);
     sync(showGdacs, layersRef.current.gdacs);
     sync(showCctv, layersRef.current.cctv);
-  }, [showWl, showRain, showDam, showGdacs, showCctv]);
+    sync(showFlow, layersRef.current.flow);
+  }, [showWl, showRain, showDam, showGdacs, showCctv, showFlow]);
 
   // Render Markers on Map
   useEffect(() => {
@@ -150,6 +156,7 @@ export const FloodMap: React.FC<FloodMapProps> = ({
     layersRef.current.dam.clearLayers();
     layersRef.current.gdacs.clearLayers();
     layersRef.current.cctv.clearLayers();
+    layersRef.current.flow.clearLayers();
     markersMapRef.current.clear();
 
     const provFilter = filterProvince.trim().toLowerCase();
@@ -434,6 +441,68 @@ export const FloodMap: React.FC<FloodMapProps> = ({
       marker.bindPopup(popupHtml, { className: 'custom-flood-popup' });
       layersRef.current.cctv.addLayer(marker);
     }
+
+    // 6. River Flow Progression & Basin Lines
+    for (const basin of RIVER_BASIN_PATHS) {
+      // Polyline river flow path
+      const polyline = L.polyline(basin.coordinates, {
+        color: basin.color,
+        weight: 3.5,
+        opacity: 0.85,
+        dashArray: '6, 6',
+      });
+      polyline.bindPopup(`
+        <div class="custom-flood-popup font-sans p-3 min-w-[240px]">
+          <div class="flex items-center gap-1.5 font-bold text-xs text-[#0075de] mb-1">
+            <span>🌊 ${basin.thaiName}</span>
+          </div>
+          <p class="text-[11px] text-[#615d59] leading-relaxed mb-2">
+            ${basin.description}
+          </p>
+          <div class="text-[10px] text-[#615d59] font-mono-num bg-[#f6f5f4] p-1.5 rounded">
+            ความยาวลำน้ำหลัก: ~${basin.totalLengthKm} กม. · ${basin.checkpoints.length} จุดตรวจ
+          </div>
+        </div>
+      `, { className: 'custom-flood-popup' });
+      layersRef.current.flow.addLayer(polyline);
+
+      // Add Checkpoint Markers along the river
+      for (const cp of basin.checkpoints) {
+        const customCpIcon = L.divIcon({
+          className: '',
+          html: `<div style="background-color: ${basin.color}" class="w-5 h-5 rounded-full text-white text-[10px] font-bold font-mono-num flex items-center justify-center shadow-md border-2 border-white ring-1 ring-black/10">
+            ${cp.stageOrder}
+          </div>`,
+          iconSize: [20, 20],
+          iconAnchor: [10, 10],
+        });
+
+        const cpMarker = L.marker([cp.lat, cp.lng], { icon: customCpIcon });
+        cpMarker.bindPopup(`
+          <div class="custom-flood-popup font-sans p-3 min-w-[240px]">
+            <div class="flex items-center justify-between gap-1 mb-1">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#0075de]/10 text-[#0075de]">
+                ด่านที่ ${cp.stageOrder} · ${cp.stationCode || 'จุดตรวจ'}
+              </span>
+              <span class="text-[10px] text-[#615d59] font-mono-num">${cp.travelTimeHours}</span>
+            </div>
+            <h4 class="font-bold text-sm text-[#000000] leading-tight mb-0.5">
+              ${cp.name}
+            </h4>
+            <div class="text-xs text-[#615d59] mb-1.5">
+              ${cp.amphoe} จ.${cp.province}
+            </div>
+            <p class="text-[11px] text-[#615d59] mb-2 leading-relaxed">
+              ${cp.description}
+            </p>
+            <div class="text-[10px] bg-[#f6f5f4] p-2 rounded text-[#31302e]">
+              <b>พื้นที่กระทบ:</b> ${cp.impactZone}
+            </div>
+          </div>
+        `, { className: 'custom-flood-popup' });
+        layersRef.current.flow.addLayer(cpMarker);
+      }
+    }
   }, [stations, rain, dams, gdacs, onlyCrit, isDark, onSelectStation, filterProvince]);
 
   // Handle flyTo
@@ -540,6 +609,17 @@ export const FloodMap: React.FC<FloodMapProps> = ({
             />
             <span className="w-2.5 h-2.5 rounded-full bg-[#ff64c8]"></span>
             <span>กล้อง CCTV</span>
+          </label>
+
+          <label className="flex items-center gap-1.5 cursor-pointer text-[#31302e] dark:text-[#d4d4d4]">
+            <input
+              type="checkbox"
+              checked={showFlow}
+              onChange={(e) => setShowFlow(e.target.checked)}
+              className="rounded accent-[#0075de] cursor-pointer"
+            />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#0075de]"></span>
+            <span className="font-semibold text-[#0075de] dark:text-[#62aef0]">เส้นทางมวลน้ำ</span>
           </label>
         </div>
 

@@ -73,26 +73,26 @@ ${lv5Stations.slice(0, 5).map((s) => `• ${s.name} (จ.${s.province}) ${fmt(s.
   };
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200">
-      <div className="w-full max-w-xl bg-white dark:bg-[#112225] rounded-2xl border border-[#d2dedd] dark:border-[#233a3d] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-xs transition-opacity animate-in fade-in duration-200">
+      <div className="w-full max-w-xl bg-white dark:bg-[#202020] rounded-xl border border-[#e6e6e6] dark:border-[#2f2f2f] shadow-[0_23px_52px_rgba(0,0,0,0.08)] flex flex-col max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="px-5 py-4 border-b border-[#d2dedd] dark:border-[#233a3d] flex items-center justify-between bg-[#f4f8f7] dark:bg-[#162b2e]/70">
+        <div className="px-5 py-4 border-b border-[#e6e6e6] dark:border-[#2f2f2f] flex items-center justify-between bg-[#f6f5f4] dark:bg-[#252525]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#0a6c86] text-white flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-[#0075de] text-white flex items-center justify-center font-bold">
               <FileText className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-[#0e2429] dark:text-[#e2eeee] font-display">
+              <h3 className="text-base font-bold text-[#000000] dark:text-[#ffffff] font-display">
                 สรุปสถานการณ์น้ำประจำวัน
               </h3>
-              <p className="text-xs text-[#53676b] dark:text-[#91a6a9]">
+              <p className="text-xs text-[#615d59] dark:text-[#9b9a97]">
                 คัดลอกข้อความสรุปเพื่อแชร์ลง LINE, Facebook หรือกลุ่มอาสา
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#53676b] hover:text-[#0e2429] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition cursor-pointer"
+            className="p-1.5 rounded-md text-[#615d59] hover:text-[#000000] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -100,22 +100,22 @@ ${lv5Stations.slice(0, 5).map((s) => `• ${s.name} (จ.${s.province}) ${fmt(s.
 
         {/* Text preview */}
         <div className="p-5 overflow-y-auto flex-1">
-          <pre className="p-4 rounded-xl bg-[#f4f8f7] dark:bg-[#162b2e] border border-[#d2dedd] dark:border-[#233a3d] text-xs font-sans text-[#0e2429] dark:text-[#e2eeee] whitespace-pre-wrap leading-relaxed select-all">
+          <pre className="p-4 rounded-lg bg-[#f6f5f4] dark:bg-[#252525] border border-[#e6e6e6] dark:border-[#2f2f2f] text-xs font-sans text-[#31302e] dark:text-[#d4d4d4] whitespace-pre-wrap leading-relaxed select-all">
             {summaryText}
           </pre>
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3.5 border-t border-[#d2dedd] dark:border-[#233a3d] bg-[#f4f8f7] dark:bg-[#162b2e]/60 flex items-center justify-between gap-3">
+        <div className="px-5 py-3.5 border-t border-[#e6e6e6] dark:border-[#2f2f2f] bg-[#f6f5f4] dark:bg-[#252525] flex items-center justify-between gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border border-[#d2dedd] dark:border-[#233a3d] text-xs font-semibold text-[#53676b] hover:text-[#0e2429] cursor-pointer"
+            className="px-4 py-2 rounded-md border border-[#e6e6e6] dark:border-[#2f2f2f] bg-white dark:bg-[#202020] text-xs font-medium text-[#31302e] hover:text-[#000000] cursor-pointer"
           >
             ยกเลิก
           </button>
           <button
             onClick={handleCopy}
-            className="px-5 py-2 rounded-lg bg-[#0a6c86] hover:bg-[#095f76] text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+            className="px-5 py-2 rounded-full bg-[#0075de] hover:bg-[#005bab] text-white text-xs font-medium flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-xs"
           >
             {copied ? <Check className="w-4 h-4 text-emerald-300" /> : <Copy className="w-4 h-4" />}
             <span>{copied ? 'คัดลอกสำเร็จแล้ว!' : 'คัดลอกข้อความทั้งหมด'}</span>
