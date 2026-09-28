@@ -256,61 +256,68 @@ export default function App() {
           </div>
         )}
 
-        {/* Urgent Overflow Alert Banner - Notion Callout style */}
-        {overflowCount > 0 && (
-          <div className="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#202020] border border-[#e03e3e] shadow-[0_1px_3px_rgba(0,0,0,0.05)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#e03e3e]/10 text-[#e03e3e] flex items-center justify-center shrink-0 font-bold">
-                🚨
-              </div>
-              <div className="text-xs sm:text-sm">
-                <span className="font-bold text-[#e03e3e] dark:text-[#ff6464]">แจ้งเตือนระดับน้ำล้นตลิ่งวิกฤต: </span>
-                <span className="text-[#31302e] dark:text-[#d4d4d4]">
-                  พบสถานีน้ำล้นตลิ่ง <b className="font-mono-num text-[#e03e3e]">{fmt(overflowCount)}</b> จุด ในพื้นที่{' '}
-                  {topOverflowProvinces.map((p) => `จ.${p}`).join(', ')}
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 self-end sm:self-auto shrink-0 text-xs">
-              <button
-                onClick={() => {
-                  setCurrentView('map');
-                  if (lv5Stations[0]) handleSelectStation(lv5Stations[0].id);
-                }}
-                className="py-1.5 px-3.5 rounded-full bg-[#0075de] hover:bg-[#005bab] text-white font-medium flex items-center gap-1 transition cursor-pointer active:scale-95"
-              >
-                <span>ดูจุดล้นตลิ่ง</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-
-              <button
-                onClick={() => setIsSosModalOpen(true)}
-                className="py-1.5 px-3.5 rounded-full bg-[#e03e3e] hover:bg-[#c92a2a] text-white font-medium flex items-center gap-1 transition cursor-pointer active:scale-95"
-              >
-                <AlertOctagon className="w-3.5 h-3.5" />
-                <span>ขอความช่วยเหลือ (SOS)</span>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* 2. Top Summary KPI Cards */}
-        <KpiCards
-          stations={stations}
-          rain={rain}
-          dams={dams}
-          onSelectOverflow={() => {
-            setCurrentView('map');
-            if (lv5Stations[0]) handleSelectStation(lv5Stations[0].id);
-          }}
-          onSelectHighRain={(lat, lng) => handleFlyToCoords(lat, lng, 12)}
-          onSelectHighDams={() => setCurrentView('analytics')}
-        />
-
-        {/* VIEW 1: MAP & SIDE PANEL (Real-time telemetry + GPS location) */}
+        {/* VIEW 1: MAP & SIDE PANEL (Overview with Warning Banner, KPI Cards, Telemetry + GPS) */}
         {(currentView === 'map' || currentView === 'all') && (
           <section className="space-y-3.5">
+            {/* Urgent Overflow Alert Banner - Notion Callout style */}
+            {overflowCount > 0 && (
+              <div className="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#202020] border border-[#e03e3e] shadow-[0_1px_3px_rgba(0,0,0,0.05)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-[#e03e3e]/10 text-[#e03e3e] flex items-center justify-center shrink-0 font-bold">
+                    🚨
+                  </div>
+                  <div className="text-xs sm:text-sm">
+                    <span className="font-bold text-[#e03e3e] dark:text-[#ff6464]">แจ้งเตือนระดับน้ำล้นตลิ่งวิกฤต: </span>
+                    <span className="text-[#31302e] dark:text-[#d4d4d4]">
+                      พบสถานีน้ำล้นตลิ่ง <b className="font-mono-num text-[#e03e3e]">{fmt(overflowCount)}</b> จุด ในพื้นที่{' '}
+                      {topOverflowProvinces.map((p) => `จ.${p}`).join(', ')}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 self-end sm:self-auto shrink-0 text-xs">
+                  <button
+                    onClick={() => {
+                      setCurrentView('map');
+                      if (lv5Stations[0]) handleSelectStation(lv5Stations[0].id);
+                    }}
+                    className="py-1.5 px-3.5 rounded-full bg-[#0075de] hover:bg-[#005bab] text-white font-medium flex items-center gap-1 transition cursor-pointer active:scale-95"
+                  >
+                    <span>ดูจุดล้นตลิ่ง</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+
+                  <button
+                    onClick={() => setIsSosModalOpen(true)}
+                    className="py-1.5 px-3.5 rounded-full bg-[#e03e3e] hover:bg-[#c92a2a] text-white font-medium flex items-center gap-1 transition cursor-pointer active:scale-95"
+                  >
+                    <AlertOctagon className="w-3.5 h-3.5" />
+                    <span>ขอความช่วยเหลือ (SOS)</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Live Rain Radar right after Urgent Overflow Alert Banner */}
+            <WindyEmbed
+              title="📡 เรดาร์ตรวจจับกลุ่มฝนและพายุสด (Real-Time Rain Radar)"
+              defaultOverlay="radar"
+              defaultViewKey="thailand"
+            />
+
+            {/* Top Summary KPI Cards */}
+            <KpiCards
+              stations={stations}
+              rain={rain}
+              dams={dams}
+              onSelectOverflow={() => {
+                setCurrentView('map');
+                if (lv5Stations[0]) handleSelectStation(lv5Stations[0].id);
+              }}
+              onSelectHighRain={(lat, lng) => handleFlyToCoords(lat, lng, 12)}
+              onSelectHighDams={() => setCurrentView('analytics')}
+            />
+
             {/* GPS My Location Risk Widget */}
             <MyLocationRisk
               stations={stations}

@@ -1,5 +1,5 @@
-import React from 'react';
-import { RefreshCw, Sun, Moon, AlertOctagon, FileText, PhoneCall, Map, BarChart3, CloudRain, Users, LayoutGrid, Table, Calculator, Video, ShieldAlert, CloudSun, Waves, Globe } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { RefreshCw, Sun, Moon, AlertOctagon, FileText, PhoneCall, Map, BarChart3, CloudRain, Users, LayoutGrid, Table, Calculator, Video, ShieldAlert, CloudSun, Waves, Globe, ChevronDown, MoreHorizontal, Check } from 'lucide-react';
 import { clock } from '../utils/formatters';
 
 export type ViewMode = 'map' | 'flow' | 'soil' | 'forecast' | 'analytics' | 'cctv' | 'aid' | 'table' | 'prep' | 'community' | 'all';
@@ -18,6 +18,59 @@ interface HeaderProps {
   onOpenSosModal: () => void;
 }
 
+interface SecondaryViewItem {
+  id: ViewMode;
+  label: string;
+  shortLabel: string;
+  icon: React.ReactNode;
+  desc: string;
+}
+
+const SECONDARY_VIEWS: SecondaryViewItem[] = [
+  {
+    id: 'analytics',
+    label: 'จังหวัด & เขื่อน',
+    shortLabel: 'จว. & เขื่อน',
+    icon: <BarChart3 className="w-4 h-4 text-[#0075de]" />,
+    desc: 'จัดอันดับจังหวัดเสี่ยง และสถานการณ์กักเก็บเขื่อนหลัก',
+  },
+  {
+    id: 'cctv',
+    label: 'กล้อง CCTV สด',
+    shortLabel: 'CCTV สด',
+    icon: <Video className="w-4 h-4 text-[#ff64c8]" />,
+    desc: 'ภาพสดจากกล้อง กทม., กรมชลฯ และกรมทางหลวง',
+  },
+  {
+    id: 'table',
+    label: 'ตารางข้อมูลสถานี',
+    shortLabel: 'ตารางข้อมูล',
+    icon: <Table className="w-4 h-4 text-[#615d59]" />,
+    desc: 'ค้นหา กรอง และส่งออกข้อมูล Excel / CSV',
+  },
+  {
+    id: 'prep',
+    label: 'คำนวณกระสอบทราย',
+    shortLabel: 'กระสอบทราย',
+    icon: <Calculator className="w-4 h-4 text-[#dd5b00]" />,
+    desc: 'คำนวณจำนวนกระสอบและแนววางป้องกันน้ำ',
+  },
+  {
+    id: 'community',
+    label: 'แจ้งเหตุชุมชน',
+    shortLabel: 'แจ้งเหตุชุมชน',
+    icon: <Users className="w-4 h-4 text-[#2a9d99]" />,
+    desc: 'โพสต์แจ้งเตือนระดับน้ำจากประชาชนในพื้นที่',
+  },
+  {
+    id: 'all',
+    label: 'รวมทุกมุมมอง (All Views)',
+    shortLabel: 'รวมทั้งหมด',
+    icon: <LayoutGrid className="w-4 h-4 text-[#9065b0]" />,
+    desc: 'แสดงข้อมูลทุกโมดูลพร้อมกันในหน้าเดียว',
+  },
+];
+
 export const Header: React.FC<HeaderProps> = ({
   updatedAt,
   isLoading,
@@ -31,6 +84,79 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenSummaryModal,
   onOpenSosModal,
 }) => {
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
+  const moreButtonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [popoverPos, setPopoverPos] = useState<{ top: number; left?: number; right?: number }>({
+    top: 52,
+    right: 16,
+  });
+
+  const updatePopoverPos = () => {
+    if (moreButtonRef.current) {
+      const rect = moreButtonRef.current.getBoundingClientRect();
+      const isMobile = window.innerWidth < 640;
+      if (isMobile) {
+        setPopoverPos({
+          top: rect.bottom + 6,
+          right: 12,
+        });
+      } else {
+        const left = Math.min(rect.left, window.innerWidth - 310);
+        setPopoverPos({
+          top: rect.bottom + 6,
+          left: Math.max(12, left),
+        });
+      }
+    }
+  };
+
+  const handleToggleMore = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!isMoreOpen) {
+      updatePopoverPos();
+      setIsMoreOpen(true);
+    } else {
+      setIsMoreOpen(false);
+    }
+  };
+
+  // Close dropdown when clicking outside or scrolling
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(target) &&
+        moreButtonRef.current &&
+        !moreButtonRef.current.contains(target)
+      ) {
+        setIsMoreOpen(false);
+      }
+    };
+
+    const handleScrollOrResize = () => {
+      if (isMoreOpen) {
+        setIsMoreOpen(false);
+      }
+    };
+
+    if (isMoreOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      window.addEventListener('scroll', handleScrollOrResize, true);
+      window.addEventListener('resize', handleScrollOrResize);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('scroll', handleScrollOrResize, true);
+      window.removeEventListener('resize', handleScrollOrResize);
+    };
+  }, [isMoreOpen]);
+
+  // Find if active view is in secondary views
+  const activeSecondaryItem = SECONDARY_VIEWS.find((item) => item.id === currentView);
+  const isSecondaryActive = Boolean(activeSecondaryItem);
+
   return (
     <header className="sticky top-0 z-50 bg-white/95 dark:bg-[#191919]/95 backdrop-blur-md border-b border-[#e6e6e6] dark:border-[#2f2f2f] transition-colors">
       <div className="max-w-[1560px] mx-auto px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2.5">
@@ -55,11 +181,12 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Zone 2: Navigation & View Mode Switcher - Notion style segment */}
+        {/* Zone 2: Navigation & View Mode Switcher - 5 Essential Primary Tabs + Secondary Dropdown */}
         <nav className="flex items-center p-1 rounded-lg bg-[#f6f5f4] dark:bg-[#202020] border border-[#e6e6e6] dark:border-[#2f2f2f] text-xs order-last lg:order-none w-full lg:w-auto overflow-x-auto gap-0.5 scrollbar-none">
+          {/* Primary 1: แผนที่สด */}
           <button
             onClick={() => onSelectView('map')}
-            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`shrink-0 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'map'
                 ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
                 : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
@@ -69,21 +196,23 @@ export const Header: React.FC<HeaderProps> = ({
             <span>แผนที่สด</span>
           </button>
 
+          {/* Primary 2: เส้นทางมวลน้ำ & การไหล */}
           <button
             onClick={() => onSelectView('flow')}
-            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`shrink-0 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'flow'
                 ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
                 : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
             }`}
           >
             <Waves className="w-3.5 h-3.5 text-[#0075de]" />
-            <span>เส้นทางมวลน้ำ & การไหล</span>
+            <span>เส้นทางมวลน้ำ</span>
           </button>
 
+          {/* Primary 3: ดิน & น้ำ Google */}
           <button
             onClick={() => onSelectView('soil')}
-            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`shrink-0 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'soil'
                 ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
                 : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
@@ -93,101 +222,109 @@ export const Header: React.FC<HeaderProps> = ({
             <span>ดิน & น้ำ Google</span>
           </button>
 
+          {/* Primary 4: พยากรณ์อากาศ 5 วัน */}
           <button
             onClick={() => onSelectView('forecast')}
-            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`shrink-0 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'forecast'
                 ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
                 : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
             }`}
           >
             <CloudSun className="w-3.5 h-3.5 text-[#dd5b00]" />
-            <span>พยากรณ์อากาศ 5 วัน</span>
+            <span>พยากรณ์อากาศ</span>
           </button>
 
-          <button
-            onClick={() => onSelectView('analytics')}
-            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
-              currentView === 'analytics'
-                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
-                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
-            }`}
-          >
-            <BarChart3 className="w-3.5 h-3.5" />
-            <span>จังหวัด & เขื่อน</span>
-          </button>
-
-          <button
-            onClick={() => onSelectView('cctv')}
-            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
-              currentView === 'cctv'
-                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
-                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
-            }`}
-          >
-            <Video className="w-3.5 h-3.5 text-[#ff64c8]" />
-            <span>กล้อง CCTV สด</span>
-          </button>
-
+          {/* Primary 5: ศูนย์ช่วยเหลือ & ถนนน้ำท่วม */}
           <button
             onClick={() => onSelectView('aid')}
-            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+            className={`shrink-0 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
               currentView === 'aid'
                 ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
                 : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
             }`}
           >
             <ShieldAlert className="w-3.5 h-3.5 text-[#2a9d99]" />
-            <span>ศูนย์ช่วยเหลือ & ถนนน้ำท่วม</span>
+            <span>ศูนย์ช่วยเหลือ</span>
           </button>
 
-          <button
-            onClick={() => onSelectView('table')}
-            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
-              currentView === 'table'
-                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
-                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
-            }`}
-          >
-            <Table className="w-3.5 h-3.5" />
-            <span>ตารางข้อมูล</span>
-          </button>
+          {/* Secondary Submenu Dropdown: เมนูย่อยเครื่องมือเพิ่มเติม */}
+          <div className="shrink-0">
+            <button
+              ref={moreButtonRef}
+              onClick={handleToggleMore}
+              className={`flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+                isSecondaryActive || isMoreOpen
+                  ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
+                  : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
+              }`}
+            >
+              {isSecondaryActive ? (
+                <>
+                  <span className="scale-90">{activeSecondaryItem?.icon}</span>
+                  <span>{activeSecondaryItem?.shortLabel}</span>
+                </>
+              ) : (
+                <>
+                  <MoreHorizontal className="w-3.5 h-3.5 text-[#615d59]" />
+                  <span>เพิ่มเติม</span>
+                </>
+              )}
+              <ChevronDown className={`w-3 h-3 transition-transform ${isMoreOpen ? 'rotate-180 text-[#0075de]' : 'opacity-70'}`} />
+            </button>
 
-          <button
-            onClick={() => onSelectView('prep')}
-            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
-              currentView === 'prep'
-                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
-                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
-            }`}
-          >
-            <Calculator className="w-3.5 h-3.5" />
-            <span>คำนวณกระสอบทราย</span>
-          </button>
+            {/* Notion-style Floating Popover Submenu with fixed positioning */}
+            {isMoreOpen && (
+              <div
+                ref={dropdownRef}
+                style={{
+                  position: 'fixed',
+                  top: `${popoverPos.top}px`,
+                  ...(popoverPos.left !== undefined ? { left: `${popoverPos.left}px` } : {}),
+                  ...(popoverPos.right !== undefined ? { right: `${popoverPos.right}px` } : {}),
+                }}
+                className="w-72 sm:w-80 bg-white dark:bg-[#202020] rounded-xl border border-[#e6e6e6] dark:border-[#2f2f2f] shadow-2xl z-[9999] p-1.5 animate-in fade-in zoom-in-95 duration-150"
+              >
+                <div className="px-2.5 py-1.5 text-[11px] font-bold text-[#615d59] dark:text-[#9b9a97] border-b border-[#e6e6e6] dark:border-[#2f2f2f] mb-1 flex items-center justify-between">
+                  <span>เครื่องมือ & ฐานข้อมูลเพิ่มเติม</span>
+                  <span className="text-[10px] text-[#0075de] font-medium">{SECONDARY_VIEWS.length} เมนู</span>
+                </div>
 
-          <button
-            onClick={() => onSelectView('community')}
-            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
-              currentView === 'community'
-                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
-                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
-            }`}
-          >
-            <Users className="w-3.5 h-3.5" />
-            <span>แจ้งเหตุชุมชน</span>
-          </button>
-
-          <button
-            onClick={() => onSelectView('all')}
-            className={`shrink-0 flex items-center justify-center gap-1 py-1.5 px-2.5 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
-              currentView === 'all'
-                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
-                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
-            }`}
-          >
-            <LayoutGrid className="w-3.5 h-3.5" />
-            <span>รวมทั้งหมด</span>
-          </button>
+                <div className="space-y-0.5 max-h-[72vh] overflow-y-auto">
+                  {SECONDARY_VIEWS.map((item) => {
+                    const isItemActive = currentView === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => {
+                          onSelectView(item.id);
+                          setIsMoreOpen(false);
+                        }}
+                        className={`w-full flex items-start gap-2.5 p-2 rounded-lg text-left transition cursor-pointer ${
+                          isItemActive
+                            ? 'bg-[#0075de]/10 text-[#0075de] dark:text-[#62aef0] font-semibold'
+                            : 'hover:bg-[#f6f5f4] dark:hover:bg-[#252525] text-[#31302e] dark:text-[#d4d4d4]'
+                        }`}
+                      >
+                        <div className="p-1 rounded-md bg-[#f6f5f4] dark:bg-[#282828] shrink-0 mt-0.5">
+                          {item.icon}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold truncate">{item.label}</span>
+                            {isItemActive && <Check className="w-3.5 h-3.5 text-[#0075de] shrink-0 ml-1" />}
+                          </div>
+                          <p className="text-[10px] text-[#615d59] dark:text-[#9b9a97] line-clamp-1 mt-0.5">
+                            {item.desc}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
         </nav>
 
         {/* Zone 3: Notion-style Actions */}
