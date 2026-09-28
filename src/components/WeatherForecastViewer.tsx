@@ -23,6 +23,7 @@ import {
   ArrowDown
 } from 'lucide-react';
 import { THAI_PROVINCES, ProvinceLocation } from '../data/provinces';
+import { requestAccurateGeolocation } from '../utils/geolocation';
 import {
   fetchWeatherForecast,
   WeatherData,
@@ -78,46 +79,24 @@ export const WeatherForecastViewer: React.FC<WeatherForecastViewerProps> = ({
   }, [selectedProvince, loadForecast]);
 
   // Handle GPS location
-  const handleUseMyLocation = () => {
-    if (!navigator.geolocation) {
-      alert('เบราว์เซอร์ของคุณไม่รองรับการระบุพิกัด GPS');
-      return;
-    }
-
+  const handleUseMyLocation = async () => {
     setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setIsLocating(false);
-        setIsCustomGps(true);
-        const { latitude, longitude } = pos.coords;
-        // Find nearest province for naming
-        let nearest = THAI_PROVINCES[0];
-        let minD = 999999;
-        THAI_PROVINCES.forEach((p) => {
-          const d = Math.hypot(p.lat - latitude, p.lng - longitude);
-          if (d < minD) {
-            minD = d;
-            nearest = p;
-          }
-        });
-
-        const customLoc: ProvinceLocation = {
-          name: `ตำแหน่งของคุณ (ใกล้ จ.${nearest.name})`,
-          enName: 'My Location',
-          region: nearest.region,
-          regionName: nearest.regionName,
-          lat: latitude,
-          lng: longitude,
-        };
-        setSelectedProvince(customLoc);
-      },
-      (err) => {
-        setIsLocating(false);
-        console.warn('Geolocation error:', err);
-        alert('ไม่สามารถเข้าถึงตำแหน่ง GPS ของคุณได้ โปรดอนุญาตสิทธิ์ตำแหน่งในเบราว์เซอร์');
-      },
-      { timeout: 10000, enableHighAccuracy: true }
-    );
+    try {
+      const loc = await requestAccurateGeolocation();
+      setIsCustomGps(true);
+      const customLoc: ProvinceLocation = {
+        ...loc.matchedProvince,
+        name: loc.displayName,
+        lat: loc.lat,
+        lng: loc.lng,
+      };
+      setSelectedProvince(customLoc);
+    } catch (err: any) {
+      console.warn('Geolocation error:', err);
+      setError(err?.message || 'ไม่สามารถเข้าถึงตำแหน่ง GPS ของคุณได้ โปรดอนุญาตสิทธิ์ตำแหน่งในเบราว์เซอร์');
+    } finally {
+      setIsLocating(false);
+    }
   };
 
   // Filtered provinces for dropdown / search

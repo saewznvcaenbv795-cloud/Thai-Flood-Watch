@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Navigation, Phone, Share2, Copy, Check, AlertOctagon, MessageCircle } from 'lucide-react';
 import { fmt } from '../utils/formatters';
+import { requestAccurateGeolocation, AccurateUserLocation } from '../utils/geolocation';
 
 interface SosBeaconModalProps {
   isOpen: boolean;
@@ -9,6 +10,7 @@ interface SosBeaconModalProps {
 
 export const SosBeaconModal: React.FC<SosBeaconModalProps> = ({ isOpen, onClose }) => {
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [accurateLoc, setAccurateLoc] = useState<AccurateUserLocation | null>(null);
   const [isLocating, setIsLocating] = useState(false);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -19,28 +21,25 @@ export const SosBeaconModal: React.FC<SosBeaconModalProps> = ({ isOpen, onClose 
 
   if (!isOpen) return null;
 
-  const handleGetLocation = () => {
-    if (!navigator.geolocation) return;
+  const handleGetLocation = async () => {
     setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setCoords({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        });
-        setIsLocating(false);
-      },
-      () => {
-        setIsLocating(false);
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
+    try {
+      const loc = await requestAccurateGeolocation();
+      setCoords({ lat: loc.lat, lng: loc.lng });
+      setAccurateLoc(loc);
+    } catch (err: any) {
+      console.warn('GPS error in SOS modal:', err);
+    } finally {
+      setIsLocating(false);
+    }
   };
 
   const mapsUrl = coords ? `https://www.google.com/maps?q=${coords.lat},${coords.lng}` : '';
 
   const sosMessage = `🚨 [ขอความช่วยเหลือเร่งด่วน น้ำท่วม]
 📍 พิกัด GPS: ${coords ? `${fmt(coords.lat, 5)}, ${fmt(coords.lng, 5)}` : 'ยังไม่ได้ระบุพิกัด'}
+📌 สถานที่: ${accurateLoc?.displayName || '-'}
+🎯 ความแม่นยำ: ${accurateLoc?.accuracyText || '-'}
 🗺️ แผนที่นำทาง: ${mapsUrl || '-'}
 👤 ผู้แจ้ง: ${name || 'ผู้ประสบภัย'}
 📞 เบอร์ติดต่อ: ${phone || '-'}
@@ -103,10 +102,15 @@ export const SosBeaconModal: React.FC<SosBeaconModalProps> = ({ isOpen, onClose 
             </div>
 
             {coords ? (
-              <div className="text-[#0e2429] dark:text-[#e2eeee] font-mono-num bg-white dark:bg-[#112225] p-2 rounded-md border border-[#d2dedd] dark:border-[#233a3d]">
-                ✅ ละติจูด: <b>{fmt(coords.lat, 5)}</b>, ลองจิจูด: <b>{fmt(coords.lng, 5)}</b>
-                <div className="text-[11px] text-[#53676b] dark:text-[#91a6a9] mt-0.5">
-                  ความแม่นยำสูง พร้อมส่งลิงก์ Google Maps ให้กู้ภัย
+              <div className="text-[#000000] dark:text-[#ffffff] font-mono-num bg-white dark:bg-[#202020] p-2.5 rounded-lg border border-[#e6e6e6] dark:border-[#2f2f2f] space-y-1">
+                <div className="font-sans font-bold text-xs text-[#0075de]">
+                  📍 {accurateLoc?.displayName || 'พิกัด GPS ของคุณ'}
+                </div>
+                <div>
+                  ละติจูด: <b>{fmt(coords.lat, 5)}</b>, ลองจิจูด: <b>{fmt(coords.lng, 5)}</b>
+                </div>
+                <div className="text-[11px] text-[#1aae39] font-medium font-sans">
+                  🎯 {accurateLoc?.accuracyText || 'ความแม่นยำสูง พร้อมส่งลิงก์ Google Maps ให้ทีมกู้ภัย'}
                 </div>
               </div>
             ) : (

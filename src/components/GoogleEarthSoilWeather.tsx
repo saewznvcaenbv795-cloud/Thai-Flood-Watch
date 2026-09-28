@@ -19,6 +19,7 @@ import {
   Info
 } from 'lucide-react';
 import { THAI_PROVINCES, ProvinceLocation } from '../data/provinces';
+import { requestAccurateGeolocation } from '../utils/geolocation';
 import {
   fetchGoogleHydrologyData,
   GoogleHydrologyData,
@@ -62,36 +63,26 @@ export const GoogleEarthSoilWeather: React.FC<GoogleEarthSoilWeatherProps> = ({
     loadData(selectedProvince.lat, selectedProvince.lng, selectedProvince.name);
   }, [selectedProvince, loadData]);
 
+  const [gpsAccuracyInfo, setGpsAccuracyInfo] = useState<string | null>(null);
+
   // Handle GPS location
-  const handleGetLocation = () => {
-    if (!navigator.geolocation) return;
+  const handleGetLocation = async () => {
     setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
-        // Find closest province
-        let closest = THAI_PROVINCES[0];
-        let minDist = Infinity;
-        THAI_PROVINCES.forEach((p) => {
-          const dist = Math.hypot(p.lat - latitude, p.lng - longitude);
-          if (dist < minDist) {
-            minDist = dist;
-            closest = p;
-          }
-        });
-        setSelectedProvince({
-          ...closest,
-          name: `${closest.name} (พิกัดของคุณ)`,
-          lat: latitude,
-          lng: longitude,
-        });
-        setIsLocating(false);
-      },
-      () => {
-        setIsLocating(false);
-      },
-      { timeout: 8000 }
-    );
+    setError(null);
+    try {
+      const loc = await requestAccurateGeolocation();
+      setSelectedProvince({
+        ...loc.matchedProvince,
+        name: loc.displayName,
+        lat: loc.lat,
+        lng: loc.lng,
+      });
+      setGpsAccuracyInfo(loc.accuracyText);
+    } catch (err: any) {
+      setError(err?.message || 'ไม่สามารถดึงพิกัด GPS ได้');
+    } finally {
+      setIsLocating(false);
+    }
   };
 
   // Filter provinces for search dropdown
@@ -190,7 +181,7 @@ export const GoogleEarthSoilWeather: React.FC<GoogleEarthSoilWeatherProps> = ({
         </div>
 
         {/* Selected location pill */}
-        <div className="flex items-center gap-2 text-xs font-medium text-[#615d59] dark:text-[#9b9a97]">
+        <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[#615d59] dark:text-[#9b9a97]">
           <span>กำลังแสดงข้อมูลสำหรับ:</span>
           <span className="font-bold text-[#000000] dark:text-[#ffffff] bg-[#f6f5f4] dark:bg-[#252525] px-2.5 py-0.5 rounded-full border border-[#e6e6e6] dark:border-[#2f2f2f]">
             📍 {selectedProvince.name}
@@ -198,6 +189,11 @@ export const GoogleEarthSoilWeather: React.FC<GoogleEarthSoilWeatherProps> = ({
           <span className="font-mono-num text-[11px]">
             ({fmt(selectedProvince.lat, 4)}, {fmt(selectedProvince.lng, 4)})
           </span>
+          {gpsAccuracyInfo && (
+            <span className="text-[11px] font-semibold text-[#1aae39] bg-[#1aae39]/10 px-2 py-0.5 rounded-full border border-[#1aae39]/20">
+              🎯 {gpsAccuracyInfo}
+            </span>
+          )}
         </div>
       </div>
 

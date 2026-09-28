@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import L from 'leaflet';
-import { Layers, MapPin, Maximize2, Minimize2, ZoomIn, ZoomOut, RotateCcw, Video, Waves } from 'lucide-react';
+import { Layers, MapPin, Maximize2, Minimize2, ZoomIn, ZoomOut, RotateCcw, Video, Waves, Crosshair, Navigation } from 'lucide-react';
 import { WaterStation, RainStation, DamData, GdacsAlert } from '../types';
 import { fmt, clock, ago, LEVELS, getRainCategory } from '../utils/formatters';
 import { FLOOD_CAMERAS } from '../data/cctvData';
 import { RIVER_BASIN_PATHS } from '../data/riverFlowData';
+import { requestAccurateGeolocation, reverseGeocodeThai, AccurateUserLocation } from '../utils/geolocation';
 
 interface FloodMapProps {
   stations: WaterStation[];
@@ -43,6 +44,7 @@ export const FloodMap: React.FC<FloodMapProps> = ({
     gdacs: L.LayerGroup;
     cctv: L.LayerGroup;
     flow: L.LayerGroup;
+    userPin: L.LayerGroup;
   }>({
     wl: L.layerGroup(),
     rain: L.layerGroup(),
@@ -50,6 +52,7 @@ export const FloodMap: React.FC<FloodMapProps> = ({
     gdacs: L.layerGroup(),
     cctv: L.layerGroup(),
     flow: L.layerGroup(),
+    userPin: L.layerGroup(),
   });
 
   const markersMapRef = useRef<Map<string, L.Layer>>(new Map());
@@ -84,6 +87,7 @@ export const FloodMap: React.FC<FloodMapProps> = ({
     layersRef.current.gdacs.addTo(map);
     layersRef.current.cctv.addTo(map);
     layersRef.current.flow.addTo(map);
+    layersRef.current.userPin.addTo(map);
 
     // Global listener for popup click to open drawer
     (window as any).__openStationDrawer = (stationId: string) => {
@@ -548,6 +552,101 @@ export const FloodMap: React.FC<FloodMapProps> = ({
   const handleZoomOut = () => mapInstanceRef.current?.zoomOut();
   const handleResetZoom = () => handleRegionJump(13.2, 101.0, 6);
 
+  const [isLocatingUser, setIsLocatingUser] = useState(false);
+  const [userLocInfo, setUserLocInfo] = useState<AccurateUserLocation | null>(null);
+
+  const handleLocateMe = async () => {
+    setIsLocatingUser(true);
+    try {
+      const loc = await requestAccurateGeolocation();
+      setUserLocInfo(loc);
+
+      const map = mapInstanceRef.current;
+      if (!map) return;
+
+      layersRef.current.userPin.clearLayers();
+
+      // Accuracy circle
+      const accCircle = L.circle([loc.lat, loc.lng], {
+        radius: Math.max(loc.accuracyMeters, 15),
+        color: '#0075de',
+        weight: 1.5,
+        fillColor: '#0075de',
+        fillOpacity: 0.12,
+      });
+      layersRef.current.userPin.addLayer(accCircle);
+
+      const userIcon = L.divIcon({
+        className: '',
+        html: `
+          <div style="position:relative;display:flex;align-items:center;justify-content:center;">
+            <div style="position:absolute;width:32px;height:32px;border-radius:9999px;background-color:rgba(0,117,222,0.3);animation:ping 1.5s cubic-bezier(0,0,0.2,1) infinite;"></div>
+            <div style="width:24px;height:24px;border-radius:9999px;background-color:#0075de;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:bold;">
+              🎯
+            </div>
+          </div>
+        `,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+      });
+
+      const marker = L.marker([loc.lat, loc.lng], {
+        icon: userIcon,
+        draggable: true,
+        title: 'ตำแหน่งสวน/บ้านของคุณ (ลากหมุดเพื่อปรับให้ตรงแปลงสวนได้)',
+      });
+
+      const buildPopup = (name: string, lat: number, lng: number, accText: string) => `
+        <div class="custom-flood-popup font-sans p-3 min-w-[240px]">
+          <div class="flex items-center gap-1.5 font-bold text-xs text-[#0075de] mb-1">
+            <span>🎯 ตำแหน่งสวน/บ้านของคุณ</span>
+          </div>
+          <div class="font-bold text-sm text-[#000000] mb-1">
+            ${name}
+          </div>
+          <div class="text-[11px] text-[#615d59] font-mono-num mb-1">
+            ละติจูด: <b>${lat.toFixed(5)}</b>, ลองจิจูด: <b>${lng.toFixed(5)}</b>
+          </div>
+          <div class="text-[10px] text-[#1aae39] font-semibold mb-2">
+            ${accText}
+          </div>
+          <div class="p-2 rounded bg-[#f6f5f4] text-[10px] text-[#615d59]">
+            💡 <b>เคล็ดลับ:</b> คุณสามารถคลิกลากหมุด 🎯 นี้ไปยังแปลงสวนหรือบ้านของคุณ เพื่อปรับตำแหน่งให้ตรงจุด 100%
+          </div>
+        </div>
+      `;
+
+      marker.bindPopup(buildPopup(loc.displayName, loc.lat, loc.lng, loc.accuracyText), { className: 'custom-flood-popup' });
+      layersRef.current.userPin.addLayer(marker);
+
+      marker.on('dragend', async (event: any) => {
+        const newLatLng = event.target.getLatLng();
+        accCircle.setLatLng(newLatLng);
+        accCircle.setRadius(10);
+        const geo = await reverseGeocodeThai(newLatLng.lat, newLatLng.lng);
+        const updatedAccText = 'พิกัดที่คุณลากหมุดระบุตำแหน่งแปลงสวนโดยตรง (ตรงจุด 100%)';
+        marker.setPopupContent(buildPopup(geo.displayName, newLatLng.lat, newLatLng.lng, updatedAccText));
+        marker.openPopup();
+        setUserLocInfo({
+          ...loc,
+          lat: newLatLng.lat,
+          lng: newLatLng.lng,
+          displayName: geo.displayName,
+          accuracyText: updatedAccText,
+          accuracyMeters: 5,
+          accuracyLevel: 'high',
+        });
+      });
+
+      map.flyTo([loc.lat, loc.lng], 14, { duration: 0.9 });
+      marker.openPopup();
+    } catch (err: any) {
+      console.warn('GPS error in map:', err);
+    } finally {
+      setIsLocatingUser(false);
+    }
+  };
+
   return (
     <div className={`bg-white dark:bg-[#202020] rounded-xl border border-[#e6e6e6] dark:border-[#2f2f2f] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col h-full transition-all ${
       isFullscreen ? 'fixed inset-0 z-[90] rounded-none' : ''
@@ -624,7 +723,17 @@ export const FloodMap: React.FC<FloodMapProps> = ({
         </div>
 
         {/* Action buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <button
+            onClick={handleLocateMe}
+            disabled={isLocatingUser}
+            className="py-1 px-2.5 rounded-md bg-[#0075de] hover:bg-[#005bab] text-white text-xs font-medium flex items-center gap-1.5 transition cursor-pointer active:scale-95 shadow-2xs whitespace-nowrap"
+            title="ค้นหาพิกัดสวน/บ้านของคุณด้วย GPS แม่นยำสูง"
+          >
+            <Crosshair className={`w-3.5 h-3.5 ${isLocatingUser ? 'animate-spin' : ''}`} />
+            <span>{isLocatingUser ? 'กำลังค้นหา…' : '🎯 ตรวจพิกัดสวน/บ้านฉัน'}</span>
+          </button>
+
           <label className="flex items-center gap-1.5 text-xs text-[#31302e] dark:text-[#d4d4d4] cursor-pointer font-medium bg-white dark:bg-[#202020] px-2.5 py-1 rounded-md border border-[#e6e6e6] dark:border-[#2f2f2f]">
             <input
               type="checkbox"
@@ -632,7 +741,8 @@ export const FloodMap: React.FC<FloodMapProps> = ({
               onChange={(e) => setOnlyCrit(e.target.checked)}
               className="rounded accent-[#e03e3e] cursor-pointer"
             />
-            <span>เฉพาะน้ำมาก/ล้นตลิ่ง</span>
+            <span className="hidden sm:inline">เฉพาะน้ำมาก/ล้นตลิ่ง</span>
+            <span className="sm:hidden">วิกฤต</span>
           </label>
 
           <button
@@ -644,6 +754,37 @@ export const FloodMap: React.FC<FloodMapProps> = ({
           </button>
         </div>
       </div>
+
+      {/* User Location GPS Banner */}
+      {userLocInfo && (
+        <div className="px-3.5 py-1.5 bg-[#0075de]/10 dark:bg-[#0075de]/20 border-b border-[#0075de]/20 flex items-center justify-between text-xs text-[#0075de] dark:text-[#62aef0] animate-in fade-in duration-200">
+          <div className="flex items-center gap-2 truncate">
+            <span className="font-bold flex items-center gap-1 shrink-0">
+              <Navigation className="w-3.5 h-3.5" />
+              <span>พิกัดสวน/บ้าน:</span>
+            </span>
+            <span className="font-medium text-[#000000] dark:text-white truncate">
+              {userLocInfo.displayName}
+            </span>
+            <span className="font-mono-num text-[11px] hidden sm:inline">
+              ({userLocInfo.lat.toFixed(5)}, {userLocInfo.lng.toFixed(5)})
+            </span>
+            <span className="text-[11px] font-semibold text-[#1aae39] bg-[#1aae39]/10 px-2 py-0.5 rounded-full hidden md:inline">
+              {userLocInfo.accuracyText}
+            </span>
+            <span className="text-[10px] text-[#615d59] dark:text-[#9b9a97] hidden lg:inline">
+              (สามารถคลิกลากหมุด 🎯 บนแผนที่เพื่อปรับตำแหน่งให้ตรงแปลงสวนได้)
+            </span>
+          </div>
+          <button
+            onClick={() => setUserLocInfo(null)}
+            className="text-[#615d59] hover:text-[#000000] dark:hover:text-white ml-2 text-sm font-bold cursor-pointer px-1"
+            title="ปิดแถบแจ้งเตือน"
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       {/* Region Presets Ribbon */}
       <div className="px-3.5 py-1.5 border-b border-[#e6e6e6] dark:border-[#2f2f2f] flex items-center justify-between text-xs bg-white dark:bg-[#202020] shrink-0">
