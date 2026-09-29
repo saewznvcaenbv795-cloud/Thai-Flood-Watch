@@ -22,6 +22,8 @@ import { StationDetailDrawer } from './components/StationDetailDrawer';
 import { EmergencyModal } from './components/EmergencyModal';
 import { SosBeaconModal } from './components/SosBeaconModal';
 import { SituationSummaryModal } from './components/SituationSummaryModal';
+import { DataSourceAttributionModal } from './components/DataSourceAttributionModal';
+import { ThaiRiverNetwork } from './components/ThaiRiverNetwork';
 import { ProvinceFilterBar } from './components/ProvinceFilterBar';
 import { Footer } from './components/Footer';
 import { fetchThaiWater, fetchGdacsAlerts, fetchNewsFeed } from './services/api';
@@ -70,6 +72,7 @@ export default function App() {
   const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState<boolean>(false);
   const [isSosModalOpen, setIsSosModalOpen] = useState<boolean>(false);
   const [isSummaryModalOpen, setIsSummaryModalOpen] = useState<boolean>(false);
+  const [isAttributionModalOpen, setIsAttributionModalOpen] = useState<boolean>(false);
 
   // Sync theme
   useEffect(() => {
@@ -215,6 +218,7 @@ export default function App() {
         onOpenEmergencyModal={() => setIsEmergencyModalOpen(true)}
         onOpenSummaryModal={() => setIsSummaryModalOpen(true)}
         onOpenSosModal={() => setIsSosModalOpen(true)}
+        onOpenAttributionModal={() => setIsAttributionModalOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -233,10 +237,14 @@ export default function App() {
             </div>
           </div>
           <div className="flex items-center gap-2 text-xs">
-            <span className="px-2.5 py-1 rounded-full bg-white dark:bg-[#252525] border border-[#e6e6e6] dark:border-[#2f2f2f] text-[#615d59] dark:text-[#9b9a97] flex items-center gap-1.5 font-mono-num">
-              <span className="w-2 h-2 rounded-full bg-[#1aae39]" />
-              <span>ข้อมูลสด: คลังข้อมูลน้ำแห่งชาติ (สสน.)</span>
-            </span>
+            <button
+              onClick={() => setIsAttributionModalOpen(true)}
+              className="px-2.5 py-1 rounded-full bg-white dark:bg-[#252525] border border-[#e6e6e6] dark:border-[#2f2f2f] text-[#615d59] dark:text-[#9b9a97] hover:text-[#0075de] dark:hover:text-[#62aef0] hover:border-[#0075de]/30 flex items-center gap-1.5 font-mono-num transition cursor-pointer shadow-2xs"
+              title="คลิกเพื่อดูที่มาของข้อมูลและลิขสิทธิ์"
+            >
+              <span className="w-2 h-2 rounded-full bg-[#1aae39] animate-pulse" />
+              <span>ข้อมูลสด: คลังข้อมูลน้ำ สสน. • ที่มา & ลิขสิทธิ์</span>
+            </button>
           </div>
         </div>
 
@@ -335,6 +343,33 @@ export default function App() {
               onClear={() => setSelectedProvince('')}
             />
 
+            {/* Quick Link to สายน้ำประเทศไทย */}
+            <div className="p-3 rounded-xl bg-gradient-to-r from-blue-50/80 to-cyan-50/80 dark:from-blue-950/20 dark:to-cyan-950/20 border border-blue-200/60 dark:border-blue-900/40 flex flex-wrap items-center justify-between gap-2.5">
+              <div className="flex items-center gap-2.5 text-xs">
+                <span className="w-7 h-7 rounded-lg bg-[#0075de] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                  🌊
+                </span>
+                <div>
+                  <span className="font-bold text-[#000000] dark:text-white">
+                    ระบบสืบค้นโครงข่ายสายน้ำประเทศไทย:
+                  </span>
+                  <span className="text-[#615d59] dark:text-[#9b9a97] ml-1.5 hidden sm:inline">
+                    สำรวจ 15,146 ลำน้ำ, 1,843 คลอง, 46 เขื่อน และเช็คว่าพิกัดของเราอยู่ใกล้แม่น้ำลำคลองไหน
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setCurrentView('rivers');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="py-1.5 px-3 rounded-lg bg-[#0075de] hover:bg-[#005bab] text-white font-medium text-xs flex items-center gap-1.5 shadow-2xs transition cursor-pointer active:scale-95"
+              >
+                <span>เปิดดูโครงข่ายสายน้ำ</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
             {/* Map & Side Panel Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-stretch">
               <div className="lg:col-span-7 xl:col-span-8 h-[400px] sm:h-[520px] md:h-[600px] lg:h-[640px]">
@@ -383,8 +418,21 @@ export default function App() {
               <MajorDams
                 dams={dams}
                 onSelectDamCoords={(lat, lng) => handleFlyToCoords(lat, lng, 11)}
+                onOpenAttributionModal={() => setIsAttributionModalOpen(true)}
               />
             </div>
+          </section>
+        )}
+
+        {/* VIEW: THAI RIVER NETWORK (สายน้ำประเทศไทย - แม่น้ำ ลำน้ำสาขา คลอง เขื่อน) */}
+        {(currentView === 'rivers' || currentView === 'all') && (
+          <section className="space-y-4">
+            <ThaiRiverNetwork
+              stations={stations}
+              dams={dams}
+              onFlyToCoords={handleFlyToCoords}
+              onOpenAttributionModal={() => setIsAttributionModalOpen(true)}
+            />
           </section>
         )}
 
@@ -465,7 +513,10 @@ export default function App() {
         )}
 
         {/* Footer */}
-        <Footer />
+        <Footer
+          onOpenAttributionModal={() => setIsAttributionModalOpen(true)}
+          updatedAt={updatedAt || new Date()}
+        />
       </main>
 
       {/* Drawer: Detailed Station Telemetry */}
@@ -494,6 +545,13 @@ export default function App() {
         rain={rain}
         dams={dams}
         updatedAt={updatedAt}
+      />
+
+      {/* Modal: Data Sources & Attribution */}
+      <DataSourceAttributionModal
+        isOpen={isAttributionModalOpen}
+        onClose={() => setIsAttributionModalOpen(false)}
+        updatedAt={updatedAt || new Date()}
       />
     </div>
   );

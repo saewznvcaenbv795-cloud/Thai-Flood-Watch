@@ -125,6 +125,23 @@ export const WaterFlowTracker: React.FC<WaterFlowTrackerProps> = ({
             </button>
           </div>
         </div>
+
+        {/* HydroRIVERS & OpenStreetMap Data Source Ribbon */}
+        <div className="pt-2.5 border-t border-[#e6e6e6] dark:border-[#2f2f2f] flex flex-wrap items-center justify-between text-[11px] text-[#615d59] dark:text-[#9b9a97] gap-2">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="flex items-center gap-1 font-semibold text-[#0075de] dark:text-[#62aef0]">
+              <Layers className="w-3.5 h-3.5" />
+              <span>โครงข่ายลำน้ำ: HydroRIVERS (WWF HydroSHEDS)</span>
+            </span>
+            <span>•</span>
+            <span>แนวแม่น้ำและคลอง: © OpenStreetMap (ODbL)</span>
+            <span>•</span>
+            <span>ความสูงภูมิประเทศ: AWS Terrain Tiles (SRTM)</span>
+          </div>
+          <span className="font-mono text-[10.5px] bg-[#0075de]/10 text-[#0075de] dark:text-[#62aef0] px-2 py-0.5 rounded font-semibold">
+            HydroRIVERS & OpenStreetMap
+          </span>
+        </div>
       </div>
 
       {/* Main Grid: Flow Path Stepper + Detail Panel */}

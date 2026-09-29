@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { RefreshCw, Sun, Moon, AlertOctagon, FileText, PhoneCall, Map, BarChart3, CloudRain, Users, LayoutGrid, Table, Calculator, Video, ShieldAlert, CloudSun, Waves, Globe, ChevronDown, MoreHorizontal, Check } from 'lucide-react';
+import { RefreshCw, Sun, Moon, AlertOctagon, FileText, PhoneCall, Map, BarChart3, CloudRain, Users, LayoutGrid, Table, Calculator, Video, ShieldAlert, CloudSun, Waves, Globe, ChevronDown, MoreHorizontal, Check, Compass } from 'lucide-react';
 import { clock } from '../utils/formatters';
 
-export type ViewMode = 'map' | 'flow' | 'soil' | 'forecast' | 'analytics' | 'cctv' | 'aid' | 'table' | 'prep' | 'community' | 'all';
+export type ViewMode = 'map' | 'rivers' | 'flow' | 'soil' | 'forecast' | 'analytics' | 'cctv' | 'aid' | 'table' | 'prep' | 'community' | 'all';
 
 interface HeaderProps {
   updatedAt: Date | null;
@@ -16,6 +16,7 @@ interface HeaderProps {
   onOpenEmergencyModal: () => void;
   onOpenSummaryModal: () => void;
   onOpenSosModal: () => void;
+  onOpenAttributionModal?: () => void;
 }
 
 interface SecondaryViewItem {
@@ -83,6 +84,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenEmergencyModal,
   onOpenSummaryModal,
   onOpenSosModal,
+  onOpenAttributionModal,
 }) => {
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const moreButtonRef = useRef<HTMLButtonElement>(null);
@@ -196,7 +198,21 @@ export const Header: React.FC<HeaderProps> = ({
             <span>แผนที่สด</span>
           </button>
 
-          {/* Primary 2: เส้นทางมวลน้ำ & การไหล */}
+          {/* Primary 2: สายน้ำประเทศไทย */}
+          <button
+            onClick={() => onSelectView('rivers')}
+            className={`shrink-0 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
+              currentView === 'rivers'
+                ? 'bg-white dark:bg-[#252525] text-[#0075de] dark:text-[#62aef0] shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-semibold border border-[#e6e6e6] dark:border-[#383838]'
+                : 'text-[#615d59] dark:text-[#9b9a97] hover:text-[#000000] dark:hover:text-[#ffffff] hover:bg-white/60 dark:hover:bg-[#252525]'
+            }`}
+            title="สายน้ำประเทศไทย: แม่น้ำ ลำน้ำสาขา คลอง และเขื่อน"
+          >
+            <Compass className="w-3.5 h-3.5 text-[#0075de]" />
+            <span>สายน้ำประเทศไทย</span>
+          </button>
+
+          {/* Primary 3: เส้นทางมวลน้ำ & การไหล */}
           <button
             onClick={() => onSelectView('flow')}
             className={`shrink-0 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-md font-medium transition cursor-pointer whitespace-nowrap ${
@@ -322,6 +338,31 @@ export const Header: React.FC<HeaderProps> = ({
                     );
                   })}
                 </div>
+
+                {onOpenAttributionModal && (
+                  <div className="border-t border-[#e6e6e6] dark:border-[#2f2f2f] pt-1 mt-1">
+                    <button
+                      onClick={() => {
+                        onOpenAttributionModal();
+                        setIsMoreOpen(false);
+                      }}
+                      className="w-full flex items-start gap-2.5 p-2 rounded-lg text-left transition cursor-pointer hover:bg-[#f6f5f4] dark:hover:bg-[#252525] text-[#31302e] dark:text-[#d4d4d4]"
+                    >
+                      <div className="p-1 rounded-md bg-[#0075de]/10 text-[#0075de] dark:text-[#62aef0] shrink-0 mt-0.5">
+                        <ShieldAlert className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold truncate">ที่มาข้อมูล & ลิขสิทธิ์</span>
+                          <span className="text-[10px] bg-[#0075de]/10 text-[#0075de] dark:text-[#62aef0] px-1.5 py-0.2 rounded font-mono font-semibold">สสน./OSM</span>
+                        </div>
+                        <p className="text-[10px] text-[#615d59] dark:text-[#9b9a97] line-clamp-1 mt-0.5">
+                          คลังข้อมูลน้ำ สสน., HydroRIVERS, OSM, SRTM, Wikipedia
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
